@@ -7,11 +7,10 @@ on:
 
 jobs:
   build:
-    name: 构建 ${{ matrix.os }}
+    name: 构建 ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -25,16 +24,22 @@ jobs:
             target: x86_64-apple-darwin
             artifact: claude_code_rs
             asset_name: claude-code-rust-macos-x86_64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: claude_code_rs
+            asset_name: claude-code-rust-macos-arm64
 
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      
+        with:
+          targets: ${{ matrix.target }}
+
       - name: 构建 Release
         run: cargo build --release --target ${{ matrix.target }}
-      
+
       - name: 上传资源到发布
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: target/${{ matrix.target }}/release/${{ matrix.artifact }}
 
@@ -43,12 +48,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v2
-      
-      - name: 构建 Docker 镜像
-        run: |
-          docker build -t claude-code-rust:${{ github.ref_name }} .
-          docker tag claude-code-rust:${{ github.ref_name }} claude-code-rust:latest
-      
-      - name: 验证镜像
-        run: docker run --rm claude-code-rust:latest --version
+      - uses: docker/setup-buildx-action@v3
+
+      - name: 构建并推送 Docker 镜像
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: |
+            claude-code-rust:${{ github.ref_name }}
+            claude-code-rust:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

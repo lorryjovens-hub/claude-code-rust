@@ -2,9 +2,9 @@ name: CI - 构建、测试和质量检查
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master]
   pull_request:
-    branches: [main, develop]
+    branches: [master]
 
 jobs:
   check:
@@ -48,11 +48,10 @@ jobs:
         run: cargo clippy --all-targets -- -D warnings
 
   build:
-    name: 构建可执行文件
+    name: 构建 ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -63,13 +62,18 @@ jobs:
           - os: macos-latest
             target: x86_64-apple-darwin
             binary_name: claude_code_rs
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            binary_name: claude_code_rs
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
       - name: 构建 Release 版本
         run: cargo build --release --target ${{ matrix.target }}
       - name: 上传构建产物
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-binary
+          name: ${{ matrix.target }}-binary
           path: target/${{ matrix.target }}/release/${{ matrix.binary_name }}

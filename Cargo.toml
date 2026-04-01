@@ -23,8 +23,6 @@ serde_json = "1.0"
 
 # File system
 walkdir = "2.5"
-glob = "0.3"
-notify = "6.1"
 
 # Terminal UI
 crossterm = { version = "0.27", features = ["event-stream"] }
@@ -34,7 +32,6 @@ ratatui = "0.26"
 which = "6.0"
 
 # Configuration
-config = "0.14"
 toml = "0.8"
 
 # Logging
@@ -44,10 +41,6 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 # Error handling
 thiserror = "1.0"
 anyhow = "1.0"
-
-# Memory & Cache
-lru = "0.12"
-dashmap = "5.5"
 
 # Crypto & Auth
 sha2 = "0.10"
@@ -59,7 +52,6 @@ async-trait = "0.1"
 
 # Regex & Parsing
 regex = "1.10"
-nom = "7.1"
 
 # Time
 chrono = { version = "0.4", features = ["serde"] }
@@ -70,15 +62,15 @@ uuid = { version = "1.8", features = ["v4", "serde"] }
 # Directories
 dirs = "5.0"
 
-# Diff
-similar = "2.5"
-
-# Markdown
-pulldown-cmark = "0.10"
-
 [dev-dependencies]
 tempfile = "3.10"
 mockall = "0.12"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
+codegen-units = 1
 
 [[bin]]
 name = "claude-code"
