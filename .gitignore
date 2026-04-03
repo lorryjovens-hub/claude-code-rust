@@ -1,31 +1,35 @@
-# Rust
+# Rust 项目 .gitignore
+
+# Build artifacts
 /target/
-Cargo.lock
+debug/
+**/*.rs.bk
 *.pdb
+
+# Cargo
+Cargo.lock
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Build artifacts
-*.exe
-*.dll
-*.so
-*.dylib
-
-# Test
-/test-project/
-*.json.bak
-
-# Config (keep template)
-settings.json
-!settings.json.template
-
 # Logs
 *.log
+logs/
+
+# Environment
+.env
+.env.local
+
+# Test
+/coverage/
+
+# Documentation
+/doc/

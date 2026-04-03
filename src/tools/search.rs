@@ -1,109 +1,168 @@
-//! Search Tool
+//! Search tools (Glob and Grep)
 
-use super::{Tool, ToolOutput, ToolError};
+use crate::error::Result;
+use crate::tools::{Tool, ToolInputSchema, ToolResult, ToolUseContext};
 use async_trait::async_trait;
-use serde_json;
-use std::path::Path;
+use std::collections::HashMap;
+use walkdir::WalkDir;
 
-pub struct SearchTool;
+/// Glob tool
+#[derive(Debug, Clone, Copy)]
+pub struct GlobTool;
 
-impl Default for SearchTool {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl SearchTool {
+impl GlobTool {
+    /// Create a new glob tool
     pub fn new() -> Self {
         Self
     }
 }
 
 #[async_trait]
-impl Tool for SearchTool {
+impl Tool for GlobTool {
     fn name(&self) -> &str {
-        "search"
+        "glob"
     }
     
     fn description(&self) -> &str {
-        "Search for patterns in files using regex"
+        "Search for files matching a glob pattern"
     }
     
-    fn input_schema(&self) -> serde_json::Value {
-        serde_json::json!({
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Directory path to search in"
-                },
-                "pattern": {
-                    "type": "string",
-                    "description": "Regex pattern to search for"
-                },
-                "file_pattern": {
-                    "type": "string",
-                    "description": "File pattern to match (optional)"
-                }
-            },
-            "required": ["path", "pattern"]
-        })
-    }
-    
-    async fn execute(&self, input: serde_json::Value) -> Result<ToolOutput, ToolError> {
-        let path = input["path"].as_str()
-            .ok_or_else(|| ToolError {
-                message: "path is required".to_string(),
-                code: Some("missing_parameter".to_string()),
-            })?;
+    fn input_schema(&self) -> ToolInputSchema {
+        let mut properties = HashMap::new();
+        properties.insert(
+            "pattern".to_string(),
+            serde_json::json!({
+                "type": "string",
+                "description": "Glob pattern to match",
+            }),
+        );
+        properties.insert(
+            "path".to_string(),
+            serde_json::json!({
+                "type": "string",
+                "description": "Directory to search in (default: current directory)",
+            }),
+        );
         
-        let pattern = input["pattern"].as_str()
-            .ok_or_else(|| ToolError {
-                message: "pattern is required".to_string(),
-                code: Some("missing_parameter".to_string()),
-            })?;
-        
-        let search_path = Path::new(path);
-        
-        if !search_path.exists() {
-            return Err(ToolError {
-                message: format!("Path does not exist: {}", path),
-                code: Some("path_not_found".to_string()),
-            });
+        ToolInputSchema {
+            r#type: "object".to_string(),
+            properties,
+            required: vec!["pattern".to_string()],
         }
+    }
+    
+    async fn execute(&self, input: serde_json::Value, context: ToolUseContext) -> Result<ToolResult> {
+        let pattern = input["pattern"]
+            .as_str()
+            .ok_or_else(|| crate::error::ClaudeError::Tool("Pattern is required".to_string()))?;
+        let path = input["path"].as_str().unwrap_or(".");
         
-        // Simple grep-like search
-        let regex = regex::Regex::new(pattern)
-            .map_err(|e| ToolError {
-                message: format!("Invalid regex pattern: {}", e),
-                code: Some("invalid_pattern".to_string()),
-            })?;
+        let search_path = context.cwd.join(path);
         
         let mut results = Vec::new();
         
-        // Walk the directory
-        for entry in walkdir::WalkDir::new(search_path)
-            .into_iter()
-            .filter_map(|e| e.ok())
-        {
-            let entry_path = entry.path();
+        for entry in WalkDir::new(&search_path) {
+            let entry = entry?;
+            let relative_path = entry.path().strip_prefix(&search_path)
+                .unwrap_or_else(|_| entry.path())
+                .to_string_lossy()
+                .to_string();
             
-            if entry_path.is_file() {
-                // Try to read and search
-                if let Ok(content) = std::fs::read_to_string(entry_path) {
+            if glob_match::glob_match(pattern, &relative_path) {
+                results.push(relative_path);
+            }
+        }
+        
+        Ok(ToolResult::success(results.join("\n")))
+    }
+}
+
+/// Grep tool
+#[derive(Debug, Clone, Copy)]
+pub struct GrepTool;
+
+impl GrepTool {
+    /// Create a new grep tool
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+#[async_trait]
+impl Tool for GrepTool {
+    fn name(&self) -> &str {
+        "grep"
+    }
+    
+    fn description(&self) -> &str {
+        "Search for text in files"
+    }
+    
+    fn input_schema(&self) -> ToolInputSchema {
+        let mut properties = HashMap::new();
+        properties.insert(
+            "pattern".to_string(),
+            serde_json::json!({
+                "type": "string",
+                "description": "Regular expression pattern to search for",
+            }),
+        );
+        properties.insert(
+            "path".to_string(),
+            serde_json::json!({
+                "type": "string",
+                "description": "Directory or file to search in (default: current directory)",
+            }),
+        );
+        properties.insert(
+            "case_insensitive".to_string(),
+            serde_json::json!({
+                "type": "boolean",
+                "description": "Case-insensitive search",
+                "default": false,
+            }),
+        );
+        
+        ToolInputSchema {
+            r#type: "object".to_string(),
+            properties,
+            required: vec!["pattern".to_string()],
+        }
+    }
+    
+    async fn execute(&self, input: serde_json::Value, context: ToolUseContext) -> Result<ToolResult> {
+        let pattern = input["pattern"]
+            .as_str()
+            .ok_or_else(|| crate::error::ClaudeError::Tool("Pattern is required".to_string()))?;
+        let path = input["path"].as_str().unwrap_or(".");
+        let case_insensitive = input["case_insensitive"].as_bool().unwrap_or(false);
+        
+        let search_path = context.cwd.join(path);
+        let _regex_flags = if case_insensitive { "i" } else { "" };
+        let regex = regex::RegexBuilder::new(pattern)
+            .case_insensitive(case_insensitive)
+            .build()?;
+        
+        let mut results = Vec::new();
+        
+        for entry in WalkDir::new(&search_path) {
+            let entry = entry?;
+            if entry.file_type().is_file() {
+                let content = tokio::fs::read_to_string(entry.path()).await;
+                if let Ok(content) = content {
                     for (line_num, line) in content.lines().enumerate() {
                         if regex.is_match(line) {
-                            results.push(format!("{}:{}: {}", entry_path.display(), line_num + 1, line));
+                            let relative_path = entry.path().strip_prefix(&search_path)
+                                .unwrap_or_else(|_| entry.path())
+                                .to_string_lossy()
+                                .to_string();
+                            results.push(format!("{}:{}: {}", relative_path, line_num + 1, line));
                         }
                     }
                 }
             }
         }
         
-        Ok(ToolOutput {
-            output_type: "text".to_string(),
-            content: results.join("\n"),
-            metadata: std::collections::HashMap::new(),
-        })
+        Ok(ToolResult::success(results.join("\n")))
     }
 }

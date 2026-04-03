@@ -24,12 +24,18 @@ pub struct McpConfig {
     pub auto_start: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+/// MCP server status
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub enum McpServerStatus {
+    /// Server is running
     Running,
+    /// Server is stopped
     Stopped,
+    /// Server encountered an error
     Error,
+    /// Server status is unknown
     Unknown,
+    /// Server is starting
     Starting,
 }
 

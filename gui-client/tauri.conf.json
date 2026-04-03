@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.tauri.app/config/2.0",
+  "build": {
+    "distDir": "../dist",
+    "devPath": "http://localhost:5173",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "id": "com.claude.code",
+    "name": "Claude Code",
+    "version": "0.1.0",
+    "description": "Claude Code GUI Client",
+    "longDescription": "A modern GUI client for Claude Code with CC Switch integration",
+    "author": {
+      "name": "Claude Code Team",
+      "email": "team@claude-code.dev"
+    },
+    "copyright": "Copyright (c) 2024 Claude Code Team",
+    "license": "MIT",
+    "repository": {
+      "url": "https://github.com/lorryjovens-hub/claude-code-rust"
+    },
+    "windows": [
+      {
+        "title": "Claude Code",
+        "width": 1200,
+        "height": 800,
+        "resizable": true,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "decorations": true,
+        "transparent": false,
+        "visible": true,
+        "fullscreen": false,
+        "icon": "icons/app-icon.png"
+      }
+    ],
+    "macOS": {
+      "bundle": {
+        "identifier": "com.claude.code"
+      }
+    },
+    "linux": {
+      "bundle": {
+        "identifier": "com.claude.code"
+      }
+    }
+  },
+  "security": {
+    "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
+  },
+  "plugins": {
+    "fs": {
+      "scope": {
+        "allow": ["$HOME/**", "$APPDATA/**"]
+      }
+    }
+  }
+}

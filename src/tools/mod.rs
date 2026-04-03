@@ -1,112 +1,167 @@
-//! Tools Module - File operations, commands, search, etc.
+//! 工具系统模块
+//! 
+//! 这个模块实现了完整的工具系统架构，包括：
+//! - 工具类型系统
+//! - 工具权限系统
+//! - 工具注册系统
+//! - 核心工具实现
 
-pub mod file_read;
-pub mod file_edit;
-pub mod file_write;
-pub mod execute_command;
-pub mod search;
-pub mod list_files;
+pub mod types;
+pub mod permissions;
+pub mod base;
+pub mod registry;
+pub mod file_tools;
+pub mod search_tools;
+pub mod command_tools;
 
-pub use file_read::FileReadTool;
-pub use file_edit::FileEditTool;
-pub use file_write::FileWriteTool;
-pub use execute_command::ExecuteCommandTool;
-pub use search::SearchTool;
-pub use list_files::ListFilesTool;
+// 重新导出主要类型
+pub use types::{
+    ToolMetadata, ToolResult, ToolUseContext, ToolInputSchema,
+    ToolCategory, ToolPermissionLevel, ValidationResult, PermissionResult,
+    PermissionMode, PermissionBehavior, ToolPermissionContext,
+};
+pub use base::{Tool, ToolBuilder};
+pub use registry::{ToolRegistry, ToolManager, ToolLoader};
+pub use permissions::{PermissionChecker, ModeChecker};
+pub use file_tools::{FileReadTool, FileEditTool, FileWriteTool};
+pub use search_tools::{GlobTool, GrepTool};
+pub use command_tools::{BashTool, PowerShellTool};
 
-use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use crate::error::Result;
 
-/// Tool trait for all tools
-#[async_trait]
-pub trait Tool: Send + Sync {
-    /// Tool name
-    fn name(&self) -> &str;
+/// 初始化工具系统
+pub async fn init() -> Result<ToolManager> {
+    let mut manager = ToolManager::new();
     
-    /// Tool description
-    fn description(&self) -> &str;
+    // 注册核心工具加载器
+    manager.add_loader(BuiltinToolLoader);
     
-    /// Tool input schema
-    fn input_schema(&self) -> serde_json::Value;
+    // 加载所有工具
+    manager.load_all().await?;
     
-    /// Execute the tool
-    async fn execute(&self, input: serde_json::Value) -> Result<ToolOutput, ToolError>;
+    tracing::info!("Tool system initialized with {} tools", 
+        manager.registry().len().await);
+    
+    Ok(manager)
 }
 
-/// Tool output
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ToolOutput {
-    /// Output type
-    pub output_type: String,
-    /// Output content
-    pub content: String,
-    /// Metadata
-    pub metadata: HashMap<String, serde_json::Value>,
-}
+/// 内置工具加载器
+struct BuiltinToolLoader;
 
-/// Tool error
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ToolError {
-    /// Error message
-    pub message: String,
-    /// Error code
-    pub code: Option<String>,
-}
-
-/// Tool registry
-pub struct ToolRegistry {
-    /// Registered tools
-    tools: HashMap<String, Box<dyn Tool>>,
-}
-
-impl ToolRegistry {
-    /// Create a new tool registry
-    pub fn new() -> Self {
-        let mut registry = Self {
-            tools: HashMap::new(),
-        };
+#[async_trait::async_trait]
+impl ToolLoader for BuiltinToolLoader {
+    async fn load(&self, registry: &ToolRegistry) -> Result<()> {
+        // 注册文件操作工具
+        registry.register(FileReadTool).await;
+        registry.register(FileEditTool).await;
+        registry.register(FileWriteTool).await;
         
-        // Register built-in tools
-        registry.register(Box::new(file_read::FileReadTool::new()));
-        registry.register(Box::new(file_edit::FileEditTool::new()));
-        registry.register(Box::new(file_write::FileWriteTool::new()));
-        registry.register(Box::new(execute_command::ExecuteCommandTool::new()));
-        registry.register(Box::new(search::SearchTool::new()));
-        registry.register(Box::new(list_files::ListFilesTool::new()));
+        // 注册代码搜索工具
+        registry.register(GlobTool).await;
+        registry.register(GrepTool).await;
         
-        registry
+        // 注册命令执行工具
+        registry.register(BashTool).await;
+        registry.register(PowerShellTool).await;
+        
+        tracing::debug!("Loaded {} builtin tools", 7);
+        
+        Ok(())
     }
     
-    /// Register a tool
-    pub fn register(&mut self, tool: Box<dyn Tool>) {
-        self.tools.insert(tool.name().to_string(), tool);
+    fn name(&self) -> &str {
+        "builtin"
     }
-    
-    /// Get a tool by name
-    pub fn get(&self, name: &str) -> Option<&dyn Tool> {
-        self.tools.get(name).map(|b| b.as_ref())
-    }
-    
-    /// List all tools
-    pub fn list(&self) -> Vec<&dyn Tool> {
-        self.tools.values().map(|b| b.as_ref()).collect()
-    }
-    
-    /// Execute a tool
-    pub async fn execute(&self, name: &str, input: serde_json::Value) -> Result<ToolOutput, ToolError> {
-        match self.tools.get(name) {
-            Some(tool) => tool.execute(input).await,
-            None => Err(ToolError {
-                message: format!("Tool not found: {}", name),
-                code: Some("tool_not_found".to_string()),
-            }),
+}
+
+/// 获取所有工具名称
+pub fn get_tool_names() -> Vec<String> {
+    vec![
+        "Read".to_string(),
+        "Edit".to_string(),
+        "Write".to_string(),
+        "Glob".to_string(),
+        "Grep".to_string(),
+        "Bash".to_string(),
+        "PowerShell".to_string(),
+    ]
+}
+
+/// 工具预设
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ToolPreset {
+    /// 默认预设
+    Default,
+    /// 简单预设（只读工具）
+    Simple,
+    /// 完整预设（所有工具）
+    Full,
+}
+
+impl ToolPreset {
+    /// 获取预设的工具名称
+    pub fn tool_names(&self) -> Vec<String> {
+        match self {
+            ToolPreset::Default => vec![
+                "Read".to_string(),
+                "Edit".to_string(),
+                "Write".to_string(),
+                "Glob".to_string(),
+                "Grep".to_string(),
+                "Bash".to_string(),
+            ],
+            ToolPreset::Simple => vec![
+                "Read".to_string(),
+                "Glob".to_string(),
+                "Grep".to_string(),
+            ],
+            ToolPreset::Full => get_tool_names(),
         }
     }
 }
 
-impl Default for ToolRegistry {
-    fn default() -> Self {
-        Self::new()
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[tokio::test]
+    async fn test_init_tool_system() {
+        let manager = init().await.unwrap();
+        assert!(manager.registry().len().await >= 7);
+    }
+    
+    #[tokio::test]
+    async fn test_builtin_tools_loaded() {
+        let manager = init().await.unwrap();
+        
+        assert!(manager.registry().has("Read").await);
+        assert!(manager.registry().has("Edit").await);
+        assert!(manager.registry().has("Write").await);
+        assert!(manager.registry().has("Glob").await);
+        assert!(manager.registry().has("Grep").await);
+        assert!(manager.registry().has("Bash").await);
+        assert!(manager.registry().has("PowerShell").await);
+    }
+    
+    #[tokio::test]
+    async fn test_tool_aliases() {
+        let manager = init().await.unwrap();
+        
+        assert!(manager.registry().has("read").await);
+        assert!(manager.registry().has("cat").await);
+        assert!(manager.registry().has("edit").await);
+        assert!(manager.registry().has("bash").await);
+    }
+    
+    #[test]
+    fn test_tool_preset() {
+        let default = ToolPreset::Default;
+        assert_eq!(default.tool_names().len(), 6);
+        
+        let simple = ToolPreset::Simple;
+        assert_eq!(simple.tool_names().len(), 3);
+        
+        let full = ToolPreset::Full;
+        assert!(full.tool_names().len() >= 7);
     }
 }

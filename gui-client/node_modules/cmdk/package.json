@@ -1,0 +1,26 @@
+{
+  "name": "cmdk",
+  "version": "0.2.1",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "18.0.15"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src",
+    "dev": "tsup src --watch"
+  }
+}

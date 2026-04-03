@@ -1,62 +1,44 @@
-//! Claude Code Rust - High-performance CLI for Claude AI
-//!
-//! A complete Rust implementation of Claude Code, featuring:
-//! - Async-first architecture with Tokio
-//! - Native terminal UI with Ratatui
-//! - MCP protocol support
-//! - Voice input support
-//! - Memory management and team sync
-//! - Plugin system
-//! - SSH connection support
-//! - Remote execution
-//! - Project initialization
-//! - WebAssembly support for browser environments
-//! - Native GUI with egui/eframe
-//! - Plugin marketplace web interface
-//! - Multi-language i18n support
+//! Claude Code - AI-powered coding assistant (Rust implementation)
+//! 
+//! This is a Rust port of the Claude Code project, providing the same
+//! AI-assisted coding capabilities with improved performance and type safety.
 
-pub mod cli;
-pub mod tools;
-pub mod api;
+#![warn(
+    missing_docs,
+    missing_debug_implementations,
+    missing_copy_implementations,
+    trivial_casts,
+    trivial_numeric_casts,
+    unused_import_braces,
+    unused_qualifications
+)]
+#![forbid(unsafe_code)]
+
+pub mod commands;
 pub mod config;
+pub mod error;
+pub mod tools;
 pub mod state;
+pub mod bridge;
 pub mod mcp;
-pub mod voice;
-pub mod memory;
-pub mod plugins;
+pub mod agents;
+pub mod analytics;
 pub mod utils;
+pub mod voice;
+pub mod daemon;
+ pub mod features;
+pub mod bootstrap;
 pub mod services;
-pub mod session;
-pub mod terminal;
-pub mod advanced;
+pub mod performance;
+pub mod security;
 
-// Feature-gated modules
-#[cfg(feature = "wasm")]
-pub mod wasm;
-#[cfg(feature = "gui-egui")]
-pub mod gui;
-#[cfg(feature = "web")]
-pub mod web;
-#[cfg(feature = "i18n")]
-pub mod i18n;
-
-pub use cli::Cli;
+// Re-export commonly used types
+pub use error::{ClaudeError, Result};
 pub use state::AppState;
-pub use tools::ToolRegistry;
-pub use api::{ApiClient, AnthropicClient, ChatMessage};
-pub use config::Settings;
-pub use mcp::McpManager;
-pub use voice::VoiceInput;
-pub use memory::MemoryManager;
-pub use plugins::PluginManager;
-pub use advanced::{SshClient, RemoteExecutor, ProjectInitializer};
 
-// Feature-gated re-exports
-#[cfg(feature = "wasm")]
-pub use wasm::ClaudeCodeWasm;
-#[cfg(feature = "gui-egui")]
-pub use gui::ClaudeCodeApp;
-#[cfg(feature = "web")]
-pub use web::WebServer;
-#[cfg(feature = "i18n")]
-pub use i18n::Translator;
+// Re-export bootstrap types
+pub use bootstrap::macros::{MacroConfig, ensure_bootstrap_macro, get_macro_config};
+pub use bootstrap::init::init;
+
+// Re-export security types
+pub use security::{SecurityManager, PermissionManager, SandboxManager, AuditLogger};

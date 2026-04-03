@@ -1,256 +1,168 @@
 # 贡献指南
 
-感谢你对 Claude Code Rust 项目的兴趣！本文档指导如何为项目贡献代码。
+感谢您有兴趣为 Claude Code Rust 项目做出贡献！我们欢迎所有形式的贡献，包括代码、文档、测试和反馈。
 
-## 🚀 快速开始
+## 如何开始
 
-### 1. 设置开发环境
+### 1. Fork 仓库
+
+首先，点击 GitHub 页面右上角的 "Fork" 按钮，将仓库 fork 到您的个人账户。
+
+### 2. 克隆您的 Fork
 
 ```bash
-# 克隆仓库
-git clone https://github.com/yourusername/claude-code-rust.git
+git clone https://github.com/YOUR_USERNAME/claude-code-rust.git
 cd claude-code-rust
+```
 
-# 安装 Rust (如果未安装)
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+### 3. 添加上游仓库
 
-# 构建项目
+```bash
+git remote add upstream https://github.com/lorryjovens-hub/claude-code-rust.git
+```
+
+### 4. 创建分支
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+## 开发环境设置
+
+### 前置要求
+
+- Rust (最新稳定版)
+- Node.js (v16+)
+- Git
+
+### 安装依赖
+
+```bash
+# 安装 Rust 依赖
 cargo build
 
-# 运行测试
+# 安装 GUI 客户端依赖
+cd gui-client
+npm install
+```
+
+### 运行测试
+
+```bash
+# 运行 Rust 测试
 cargo test
 
-# 检查代码质量
-cargo clippy
+# 运行 GUI 客户端测试
+cd gui-client
+npm test
 ```
 
-### 2. 开发工作流
+## 贡献流程
+
+### 1. 查找或创建 Issue
+
+- 查看现有的 [Issues](https://github.com/lorryjovens-hub/claude-code-rust/issues)
+- 如果您想处理某个问题，请在 Issue 下留言
+- 如果没有合适的 Issue，可以创建一个新的
+
+### 2. 编写代码
+
+- 遵循现有的代码风格
+- 添加适当的注释
+- 确保代码通过所有测试
+
+### 3. 提交更改
 
 ```bash
-# 创建特性分支
-git checkout -b feature/your-feature-name
-
-# 进行更改并提交
 git add .
-git commit -m "feat: 描述你的改进"
-
-# 推送分支
+git commit -m "feat: 添加新功能描述"
 git push origin feature/your-feature-name
-
-# 创建 Pull Request
-# 在 GitHub 上提交 PR
 ```
 
-## 📋 提交规范
+### 4. 创建 Pull Request
 
-我们遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
+- 访问您的 fork 页面
+- 点击 "Compare & pull request"
+- 填写 PR 描述，包括：
+  - 解决了什么问题
+  - 如何测试
+  - 相关的 Issue 编号
+
+## 代码规范
+
+### Rust 代码
+
+- 使用 `cargo fmt` 格式化代码
+- 使用 `cargo clippy` 检查代码
+- 遵循 [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/)
+
+### TypeScript/JavaScript 代码
+
+- 使用 `npm run lint` 检查代码
+- 遵循项目中的 ESLint 配置
+
+### 提交信息规范
+
+我们使用 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
+
+- `feat:` 新功能
+- `fix:` 修复 bug
+- `docs:` 文档更新
+- `style:` 代码格式（不影响代码运行的变动）
+- `refactor:` 重构
+- `test:` 测试相关
+- `chore:` 构建过程或辅助工具的变动
+
+## 项目结构
 
 ```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
+claude-code-rust/
+├── src/                    # Rust 核心代码
+│   ├── gui/               # GUI 模块
+│   ├── i18n/              # 国际化
+│   ├── wasm/              # WebAssembly 支持
+│   └── web/               # Web 服务器
+├── gui-client/            # GUI 客户端 (React + Tauri)
+├── locales/               # 翻译文件
+└── docs/                  # 文档
 ```
 
-### 提交类型
+## 功能模块
 
-- `feat`: 新功能
-- `fix`: 错误修复
-- `docs`: 文档更新
-- `style`: 代码风格 (不改变功能)
-- `refactor`: 代码重构
-- `perf`: 性能优化
-- `test`: 添加/修改测试
-- `chore`: 项目管理
+### 当前功能
 
-### 示例
+- ✅ CLI 版本
+- ✅ GUI 版本 (egui)
+- ✅ WebAssembly 支持
+- ✅ 多语言支持
+- ✅ 插件系统
+- ✅ 插件市场 Web 界面
 
-```
-feat(cli): 添加 config reset 命令
+### 计划中功能
 
-- 支持重置配置到默认值
-- 添加确认提示
-- 添加 --force 标志
+- 🔄 PI 流式响应优化
+- 🔄 完整的 API 集成测试
+- 🔄 更多 GUI 改进
 
-Closes #123
-```
+## 需要帮助？
 
-## ✅ 审查标准
+如果您在贡献过程中遇到任何问题：
 
-在提交 PR 前，请确保：
+1. 查看 [Issues](https://github.com/lorryjovens-hub/claude-code-rust/issues) 是否有类似问题
+2. 创建新的 Issue 描述您的问题
+3. 加入我们的讨论社区
 
-### 代码质量
-- [ ] 运行 `cargo clippy` 无错误
-- [ ] 运行 `cargo fmt` 格式化代码
-- [ ] 添加/更新相关测试
-- [ ] 运行 `cargo test` 所有测试通过
+## 行为准则
 
-### 文档
-- [ ] 更新相关文档
-- [ ] 添加代码注释 (复杂逻辑)
-- [ ] 更新 CHANGELOG.md
+- 尊重所有贡献者
+- 保持专业和友善
+- 接受建设性的批评
+- 关注什么是最好的社区和项目
 
-### 性能
-- [ ] 未显著增加启动时间
-- [ ] 未显著增加内存占用
-- [ ] 已优化关键路径
+## 许可证
 
-## 🏆 最佳实践
-
-### 代码风格
-
-```rust
-// ✅ 好的例子
-pub async fn query(client: &Client, q: &str) -> Result<Response> {
-    // 完整的错误处理
-    client
-        .post("/query")
-        .json(&QueryRequest { query: q })
-        .send()
-        .await
-        .context("Failed to send query")?
-        .json()
-        .await
-        .context("Failed to parse response")
-}
-
-// ❌ 避免
-pub async fn query(client: &Client, q: &str) -> Result<Response> {
-    let resp = client.post("/query").json(&QueryRequest { query: q }).send().await?;
-    Ok(resp.json().await?)  // 信息不足的错误处理
-}
-```
-
-### 错误处理
-
-```rust
-// ✅ 使用 anyhow + thiserror
-use thiserror::Error;
-use anyhow::{Context, Result};
-
-#[derive(Error, Debug)]
-pub enum ConfigError {
-    #[error("Invalid configuration: {0}")]
-    Invalid(String),
-    
-    #[error("Configuration file not found: {0}")]
-    NotFound(String),
-}
-
-// ❌ 有时候对
-pub fn load_config(path: &str) -> Result<Config> {
-    std::fs::read_to_string(path)
-        .context("Failed to read config file")?
-        .parse()
-        .context("Failed to parse config file")
-}
-```
-
-### 异步编程
-
-```rust
-// ✅ 使用 Tokio
-#[tokio::main]
-async fn main() -> Result<()> {
-    let client = Client::new();
-    client.query("test").await?;
-    Ok(())
-}
-
-// ✅ 批量操作使用 join_all
-let futures: Vec<_> = urls
-    .iter()
-    .map(|url| fetch(url))
-    .collect();
-
-let results = futures::future::join_all(futures).await;
-```
-
-## 📊 性能期望
-
-新增代码应该：
-
-- **启动速度**: 不增将启动时间超过 5%
-- **内存占用**: 不增加基础内存超过 2%
-- **二进制大小**: 不增加体积超过 500KB
-
-### 性能测试
-
-```bash
-# 构建 release 版本
-cargo build --release
-
-# 测试启动速度
-time ./target/release/claude_code_rs --version
-
-# 测试内存占用
-/usr/bin/time -v ./target/release/claude_code_rs --help
-
-# 检查二进制大小
-ls -lh ./target/release/claude_code_rs
-```
-
-## 🐛 报告 Bug
-
-在提交 Issue 时：
-
-1. **检查已有 Issue** - 避免重复
-2. **提供复现步骤** - 清晰的步骤说明
-3. **提供环境信息** - OS, Rust 版本等
-4. **提供日志输出** - RUST_LOG=debug 的输出
-
-### Bug 报告模板
-
-```markdown
-## 描述
-简明描述 bug
-
-## 复现步骤
-1. ...
-2. ...
-3. ...
-
-## 预期行为
-应该发生什么
-
-## 实际行为
-实际发生了什么
-
-## 环境
-- OS: [e.g. Windows 10, Ubuntu 22.04]
-- Rust: 1.75+ (cargo --version)
-- 其他相关信息
-
-## 日志
-\`\`\`
-RUST_LOG=debug cargo run ...
-<输出>
-\`\`\`
-```
-
-## 💡 功能建议
-
-良好的功能建议应该包括：
-
-- [ ] 明确的用例说明
-- [ ] 与现有功能的关系
-- [ ] 可能的实现方向 (可选)
-- [ ] 性能/安全性考虑 (如适用)
-
-## 📚 资源
-
-- [Rust Book](https://doc.rust-lang.org/book/)
-- [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/)
-- [Tokio 文档](https://tokio.rs/)
-- 项目代码注释和文档
-
-## ❓ 需要帮助？
-
-- 提交 Discussion - 提问和讨论
-- 加入 Discord/Slack - (待添加)
-- 阅读现有 PR - 学习如何做好贡献
+通过贡献代码，您同意您的贡献将在 MIT 许可证下发布。
 
 ---
 
-感谢你的贡献！🙌
+再次感谢您的贡献！🎉

@@ -9,6 +9,28 @@ pub use mcp_config::{McpConfig, McpServerStatus};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
+/// Main configuration structure (alias for Settings)
+pub type Config = Settings;
+
+/// Permission mode for tools
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum PermissionMode {
+    /// Use default permission
+    Default,
+    /// Always allow
+    AlwaysAllow,
+    /// Always deny
+    AlwaysDeny,
+    /// Always ask
+    AlwaysAsk,
+}
+
+impl Default for PermissionMode {
+    fn default() -> Self {
+        PermissionMode::Default
+    }
+}
+
 /// Main configuration structure
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings {
@@ -30,6 +52,7 @@ pub struct Settings {
     pub plugins: PluginSettings,
 }
 
+/// Memory settings
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MemorySettings {
     /// Enable memory persistence
@@ -42,7 +65,8 @@ pub struct MemorySettings {
     pub max_memories: usize,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Voice settings
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct VoiceSettings {
     /// Enable voice input
     pub enabled: bool,
@@ -54,6 +78,7 @@ pub struct VoiceSettings {
     pub sample_rate: u32,
 }
 
+/// Plugin settings
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PluginSettings {
     /// Enable plugin system
@@ -153,4 +178,24 @@ impl Settings {
         settings.save()?;
         Ok(())
     }
+}
+
+/// Configuration loader trait
+pub trait ConfigLoader {
+    /// Load configuration
+    fn load_config(&self) -> crate::error::Result<Settings>;
+    /// Save configuration
+    fn save_config(&self, settings: &Settings) -> crate::error::Result<()>;
+}
+
+/// Enable configuration system
+/// 
+/// This function initializes the configuration system and validates
+/// that all configurations are valid.
+pub fn enable_configs() -> crate::error::Result<()> {
+    tracing::debug!("Enabling configuration system");
+    
+    let _settings = Settings::load()?;
+    
+    Ok(())
 }
