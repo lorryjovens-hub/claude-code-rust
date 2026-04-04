@@ -32,6 +32,7 @@ pub mod performance;
 pub mod security;
 pub mod api;
 pub mod plugins;
+pub mod query;
 
 // Re-export commonly used types
 pub use error::{ClaudeError, Result};

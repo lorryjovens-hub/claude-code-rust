@@ -190,7 +190,7 @@ fn init_logging() -> Result<()> {
 async fn run(cli: Cli) -> Result<()> {
     // Show version if requested
     if let Some(Commands::Version) = cli.command {
-        println!("{} ({})", env!("CARGO_PKG_VERSION"), env!("CARGO_PKG_NAME"));
+        println!("{} ({}) [Rust]", env!("CARGO_PKG_VERSION"), env!("CARGO_PKG_NAME"));
         return Ok(());
     }
     
