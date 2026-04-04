@@ -1,4 +1,10 @@
 # Claude Code Rust
+截止2026/4/4/15:00,已完成
+
+<img width="987" height="1148" alt="99fad6ef0560b6ce14658ad0e285af27" src="https://github.com/user-attachments/assets/ddc1ac34-b3b8-44ed-a484-3d463c9470bb" />
+
+<img width="1044" height="1179" alt="c482bd552ec72bde4d73d3b0e9845e26" src="https://github.com/user-attachments/assets/704fa264-8159-4025-9079-c41bd133b03c" />
+
 
 兄弟们今天也是我狂肝花了3个通宵的时间肝出来的，截止2026.4.3.12点，根据rust版本的CC统计也是已经完成了15000行rust源码，和14万+总代码行数
 这是中国国内首个claude code 的 rust语言重构包，考虑到原版TS源代码的封号和后门问题，我已经在重构的过程中剔除掉了部分限制!
