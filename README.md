@@ -3,7 +3,8 @@
 兄弟们今天也是我狂肝花了3个通宵的时间肝出来的，截止2026.4.3.12点，根据rust版本的CC统计也是已经完成了15000行rust源码，和14万+总代码行数
 这是中国国内首个claude code 的 rust语言重构包，考虑到原版TS源代码的封号和后门问题，我已经在重构的过程中剔除掉了部分限制!
 <img width="3840" height="2088" alt="2561d18937db04132ae9c747df0d3339" src="https://github.com/user-attachments/assets/7a4c33dc-e0a1-44bb-9554-8e2c1a265e16" />
-<img width="2073" height="321" alt="0265080337a8c7daf3d9fa8b0add8441" src="https://github.com/user-attachments/assets/89311521-321f-4408-86f1-aaefc0ad8e9d" />
+<img width="2583" height="2052" alt="741417f9032ae530d98614f1533713ba" src="https://github.com/user-attachments/assets/47d2f37f-63bb-4d5e-b05e-197f9e5158c5" />
+
 <img width="1278" height="984" alt="image" src="https://github.com/user-attachments/assets/aff586a2-6ad2-4804-93f1-0edc71b07614" />
 
 现在已经基本完成了大部分的功能构建。感谢兄弟们大力支持！！！具体情况可以关注B站：lorry黄同学   需要源码的万字分析文档的可以看我飞书：https://my.feishu.cn/wiki/GfQGwIen9izVnikrchFcKOtOnTb,
