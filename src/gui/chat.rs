@@ -333,7 +333,7 @@ impl ChatPanel {
             });
     }
 
-    fn render_user_avatar(&self, ui: &mut Ui, theme: &super::Theme) {
+    fn render_user_avatar(&self, ui: &mut Ui, _theme: &super::Theme) {
         Frame::none()
             .fill(Color32::from_rgb(80, 80, 80))
             .rounding(Rounding::same(8.0))
@@ -817,7 +817,7 @@ enum ContentPart<'a> {
     InlineCode(&'a str),
 }
 
-fn split_by_code_blocks(content: &str) -> Vec<ContentPart> {
+fn split_by_code_blocks(content: &str) -> Vec<ContentPart<'_>> {
     let mut parts = Vec::new();
     let mut remaining = content;
 
@@ -859,7 +859,7 @@ fn split_by_code_blocks(content: &str) -> Vec<ContentPart> {
     parts
 }
 
-fn split_inline_code(text: &str) -> Vec<ContentPart> {
+fn split_inline_code(text: &str) -> Vec<ContentPart<'_>> {
     let mut parts = Vec::new();
     let mut remaining = text;
 

@@ -3,7 +3,6 @@
 //! Executes skills with parameter parsing and context management.
 
 use super::{Skill, SkillParams, SkillContext, SkillResult, SkillError};
-use regex::Regex;
 use std::sync::Arc;
 
 /// Skill executor
@@ -80,7 +79,7 @@ impl SkillExecutor {
     }
 
     /// Validate parameters against skill schema
-    fn validate_params(&self, skill: Arc<dyn Skill>, params: &SkillParams) -> Result<(), SkillError> {
+    fn validate_params(&self, _skill: Arc<dyn Skill>, _params: &SkillParams) -> Result<(), SkillError> {
         // Simple validation based on schema
         // In a full implementation, this would validate against JSON Schema
         Ok(())

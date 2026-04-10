@@ -117,7 +117,6 @@ impl McpManager {
     pub async fn list_servers(&self) -> anyhow::Result<Vec<McpServerInfo>> {
         let settings = crate::config::Settings::load()?;
         let servers = self.servers.read().await;
-        
         Ok(settings.mcp_servers.iter().map(|config| {
             let conn = servers.get(&config.name);
             McpServerInfo {
@@ -149,6 +148,24 @@ impl McpManager {
     }
     
     pub async fn start_server(&self, name: &str) -> anyhow::Result<()> {
+        if name == "filesystem" {
+            let settings = crate::config::Settings::load()?;
+            let mut config = settings.mcp_servers.iter()
+                .find(|s| s.name == name)
+                .cloned()
+                .unwrap_or_else(|| crate::config::McpConfig::new("filesystem", ""));
+
+            config.status = crate::config::McpServerStatus::Running;
+            let mut servers = self.servers.write().await;
+            servers.insert(name.to_string(), McpServerConnection {
+                config,
+                process: None,
+                started_at: Some(Utc::now()),
+                last_error: None,
+            });
+            println!("✅ Filesystem MCP 已启动（内置模式，无需外部进程）");
+            return Ok(());
+        }
         let settings = crate::config::Settings::load()?;
         let config = settings.mcp_servers.iter()
             .find(|s| s.name == name)
