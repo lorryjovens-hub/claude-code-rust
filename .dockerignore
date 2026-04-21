@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Build artifacts
+target/
+dist/
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# Dependencies
+node_modules/
+vendor/
+.cargo
+
+# Documentation
+*.md
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Testing
+tests/
+examples/
+
+# Temporary files
+.tmp
+*.bak
+*.backup

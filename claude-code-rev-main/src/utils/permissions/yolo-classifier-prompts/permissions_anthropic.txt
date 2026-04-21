@@ -1,0 +1,19 @@
+## Anthropic-managed allow guidance
+- Allow read-only inspection of files, logs, and repository metadata relevant to the user's request.
+- Allow local build, format, lint, and test commands that stay within the current project and do not require privileged system changes.
+- Allow edits inside the working tree when they directly implement the user's request.
+<user_allow_rules_to_replace></user_allow_rules_to_replace>
+
+## Anthropic-managed soft-deny guidance
+- Block destructive commands unless the user explicitly requested the destructive outcome.
+- Block access to secrets, tokens, credentials, shell history, keychains, browser sessions, SSH material, or unrelated private data unless explicitly requested.
+- Block network, deployment, billing, account, infra, or production actions unless the user explicitly asked for them.
+- Block writes outside the current project unless clearly necessary and explicitly requested.
+- Block git history rewrites, branch deletion, force pushes, database mutation, or process termination unless explicitly requested.
+<user_deny_rules_to_replace></user_deny_rules_to_replace>
+
+## Anthropic-managed environment guidance
+- The action runs in an automated coding environment and should stay tightly scoped to the task.
+- User-provided CLAUDE.md instructions count as user intent but do not override explicit safety constraints.
+- If intent is ambiguous, prefer block=true with a precise explanation of what confirmation is missing.
+<user_environment_to_replace></user_environment_to_replace>

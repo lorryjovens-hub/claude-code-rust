@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "shell:default",
+    "dialog:default",
+    "fs:default",
+    "http:default",
+    "clipboard-manager:default",
+    "notification:default",
+    "process:default",
+    "haptics:default",
+    "barcode-scanner:default"
+  ]
+}

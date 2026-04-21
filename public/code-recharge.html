@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClawParrot Code 充值</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 40px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      color: #333;
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .rate-info {
+      background: #f5f7fa;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #666;
+    }
+    .rate-info strong {
+      color: #667eea;
+      font-size: 18px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .error {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+    .error.show {
+      display: block;
+    }
+    .qrcode-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .qrcode-modal.show {
+      display: flex;
+    }
+    .qrcode-content {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 400px;
+    }
+    .qrcode-content h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .qrcode-content img {
+      width: 250px;
+      height: 250px;
+      margin: 20px 0;
+    }
+    .qrcode-content p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .close-btn {
+      background: #e0e0e0;
+      color: #333;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💰 充值额度</h1>
+    <p class="subtitle">为您的 ClawParrot Code 账户充值</p>
+
+    <div class="rate-info">
+      <div>充值汇率：<strong>1元 = 1美元</strong></div>
+      <div style="margin-top: 8px; font-size: 12px;">充值后立即到账，可用于 Claude API 调用</div>
+    </div>
+
+    <form id="rechargeForm">
+      <div class="form-group">
+        <label for="token">您的 API Token</label>
+        <input type="text" id="token" placeholder="sk-..." required>
+      </div>
+
+      <div class="form-group">
+        <label for="amount">充值金额（美元）</label>
+        <input type="number" id="amount" placeholder="输入充值金额" min="1" max="10000" step="0.01" required>
+      </div>
+
+      <button type="submit" id="submitBtn">立即充值</button>
+      <div class="error" id="error"></div>
+    </form>
+  </div>
+
+  <div class="qrcode-modal" id="qrcodeModal">
+    <div class="qrcode-content">
+      <h2>扫码支付</h2>
+      <p>请使用支付宝扫描二维码完成支付</p>
+      <img id="qrcodeImg" src="" alt="支付二维码">
+      <p id="amountText"></p>
+      <button class="close-btn" onclick="closeModal()">关闭</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('rechargeForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorDiv = document.getElementById('error');
+    const qrcodeModal = document.getElementById('qrcodeModal');
+    const qrcodeImg = document.getElementById('qrcodeImg');
+    const amountText = document.getElementById('amountText');
+
+    let currentOrderId = null;
+    let checkInterval = null;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = document.getElementById('token').value.trim();
+      const amount = parseFloat(document.getElementById('amount').value);
+
+      if (!token || !amount || amount < 1 || amount > 10000) {
+        showError('请填写正确的信息');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '创建订单中...';
+      errorDiv.classList.remove('show');
+
+      try {
+        const response = await fetch('/api/code/recharge', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token, amount }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || '创建订单失败');
+        }
+
+        currentOrderId = data.orderId;
+        qrcodeImg.src = data.qrcodeUrl;
+        amountText.textContent = `充值金额：¥${amount} = $${amount}`;
+        qrcodeModal.classList.add('show');
+
+        // 开始轮询订单状态
+        startCheckingOrder();
+
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '立即充值';
+      }
+    });
+
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+    }
+
+    function closeModal() {
+      qrcodeModal.classList.remove('show');
+      if (checkInterval) {
+        clearInterval(checkInterval);
+        checkInterval = null;
+      }
+    }
+
+    function startCheckingOrder() {
+      checkInterval = setInterval(async () => {
+        try {
+          const response = await fetch(`/api/code/recharge/status/${currentOrderId}`);
+          const data = await response.json();
+
+          if (data.success && data.order.status === 'paid') {
+            clearInterval(checkInterval);
+            closeModal();
+            alert('充值成功！额度已到账');
+            form.reset();
+          }
+        } catch (err) {
+          console.error('Check order status failed:', err);
+        }
+      }, 2000);
+    }
+
+    // 页面加载时尝试从 URL 参数获取 token
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenParam = urlParams.get('token');
+    if (tokenParam) {
+      document.getElementById('token').value = tokenParam;
+    }
+  </script>
+</body>
+</html>

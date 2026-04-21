@@ -1,0 +1,44 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
+  "productName": "Claude (rust)",
+  "version": "1.6.12",
+  "identifier": "com.claude.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:3456",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Claude (rust)",
+        "width": 1150,
+        "height": 700,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "decorations": true,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' asset: https: data:; font-src 'self' https:; connect-src 'self' http://127.0.0.1:30080 https: http://localhost:*"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/icon.ico"
+    ],
+    "android": {
+      "minSdkVersion": 24
+    }
+  },
+  "plugins": {
+    "shell": {
+      "open": true
+    }
+  }
+}

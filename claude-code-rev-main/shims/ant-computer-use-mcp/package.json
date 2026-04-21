@@ -1,0 +1,11 @@
+{
+  "name": "@ant/computer-use-mcp",
+  "version": "0.0.0-restored",
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./types": "./types.ts",
+    "./sentinelApps": "./sentinelApps.ts"
+  }
+}

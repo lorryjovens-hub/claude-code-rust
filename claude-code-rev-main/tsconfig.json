@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": false,
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "baseUrl": ".",
+    "paths": {
+      "src/*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "bun"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "vendor/**/*",
+    "shims/**/*"
+  ]
+}

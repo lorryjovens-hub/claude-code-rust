@@ -1,0 +1,54 @@
+name: 发布 - 构建和发布新版本
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: 构建 ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: claude_code_rs
+            asset_name: claude-code-rust-linux-x86_64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: claude_code_rs.exe
+            asset_name: claude-code-rust-windows-x86_64.exe
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: claude_code_rs
+            asset_name: claude-code-rust-macos-x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      
+      - name: 构建 Release
+        run: cargo build --release --target ${{ matrix.target }}
+      
+      - name: 上传资源到发布
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+
+  docker:
+    name: 构建 Docker 镜像
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v2
+      
+      - name: 构建 Docker 镜像
+        run: |
+          docker build -t claude-code-rust:${{ github.ref_name }} .
+          docker tag claude-code-rust:${{ github.ref_name }} claude-code-rust:latest
+      
+      - name: 验证镜像
+        run: docker run --rm claude-code-rust:latest --version

@@ -1,0 +1,467 @@
+/* === Local Font Imports (must come first - CSS spec requirement) === */
+@import '@fontsource-variable/figtree';
+@import '@fontsource-variable/source-serif-4';
+@import '@fontsource/spectral/400.css';
+@import '@fontsource/spectral/500.css';
+@import '@fontsource/spectral/600.css';
+@import '@fontsource/spectral/700.css';
+@import '@fontsource/spectral/800.css';
+@import '@fontsource/spectral/400-italic.css';
+
+/* === Tailwind CSS Directives === */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === CSS Variables (Theme) === */
+:root {
+  --bg-claude-main: #F8F8F6;
+  --bg-claude-sidebar: #F7F7F4;
+  --border-claude: #E8E7E3;
+  --text-claude-main: #2a2a2a;
+  --text-claude-model-body: #2a2a2a;
+  --text-claude-secondary: #666666;
+  --bg-claude-accent: #CC7C5E;
+  --bg-claude-hover: #EFEEEB;
+  --bg-claude-btn-hover: #EAE9E6;
+  --bg-claude-input: #FFFFFF;
+  --bg-claude-avatar: #333333;
+  --text-claude-avatar: #FFFFFF;
+  --bg-mode-tabs: #EFEEEB;
+  --bg-mode-tab-active: #F8F8F6;
+}
+
+.dark {
+  --bg-claude-main: #1F1F1E;
+  --bg-claude-sidebar: #1E1E1C;
+  --border-claude: #444341;
+  --text-claude-main: #FFFFFF;
+  --text-claude-model-body: #EDEAE1;
+  --text-claude-secondary: #ABA499;
+  --bg-claude-accent: #CC7C5E;
+  --bg-claude-hover: #121212;
+  --bg-claude-btn-hover: #121212;
+  --bg-claude-input: #30302E;
+  --bg-claude-avatar: #D4D4D4;
+  --text-claude-avatar: #222222;
+  --bg-mode-tabs: #121212;
+  --bg-mode-tab-active: #1F1F1E;
+  color-scheme: dark;
+}
+
+/* === Base Styles === */
+body {
+  font-family: 'Figtree', sans-serif;
+  background-color: var(--bg-claude-main);
+  color: var(--text-claude-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Global transition for theme changes */
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video,
+button,
+input,
+textarea {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+.font-serif-claude {
+  font-family: 'Source Serif 4', serif;
+}
+
+/* === Sidebar Scrollbar === */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: var(--text-claude-secondary);
+  opacity: 0.5;
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-claude-main);
+  opacity: 0.7;
+}
+
+html.dark .sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent !important;
+}
+
+html.dark .sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: #4A4A4A !important;
+  opacity: 0.8;
+}
+
+html.dark .sidebar-scroll:hover::-webkit-scrollbar-thumb:hover {
+  background-color: #5A5A5A !important;
+  opacity: 1;
+}
+
+/* === Markdown Styles === */
+.markdown-body p {
+  margin-bottom: 0.6em;
+  line-height: 1.5;
+  color: var(--text-claude-main);
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 1.0em;
+  margin-bottom: 0.4em;
+  font-weight: 600;
+  color: var(--text-claude-main);
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  margin-bottom: 0.6em;
+  padding-left: 1.5em;
+  list-style-type: disc;
+  color: var(--text-claude-main);
+}
+
+.markdown-body pre {
+  background-color: var(--bg-claude-input);
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 0.6em;
+  font-family: monospace;
+  border: 1px solid var(--border-claude);
+}
+
+.markdown-body code {
+  background-color: var(--bg-claude-hover);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--text-claude-main);
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.assistant-markdown {
+  color: var(--text-claude-model-body);
+}
+
+.assistant-markdown p,
+.assistant-markdown h1,
+.assistant-markdown h2,
+.assistant-markdown h3,
+.assistant-markdown h4,
+.assistant-markdown h5,
+.assistant-markdown h6,
+.assistant-markdown ul,
+.assistant-markdown ol,
+.assistant-markdown li,
+.assistant-markdown blockquote,
+.assistant-markdown strong,
+.assistant-markdown em,
+.assistant-markdown .katex-display>.katex {
+  color: var(--text-claude-model-body);
+}
+
+/* Standard inline code */
+.inline-code {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgb(208, 207, 204) !important;
+  color: rgb(132, 33, 35) !important;
+}
+
+html.dark .inline-code {
+  background-color: rgb(46, 46, 43) !important;
+  border-color: rgb(56, 55, 52) !important;
+  color: rgb(234, 134, 130) !important;
+}
+
+/* Sidebar dark mode overrides */
+html.dark .bg-claude-sidebar {
+  color: rgb(190, 189, 180) !important;
+}
+
+html.dark .bg-claude-sidebar button {
+  color: rgb(190, 189, 180);
+}
+
+html.dark .bg-claude-sidebar .text-claude-text {
+  color: rgb(190, 189, 180) !important;
+}
+
+html.dark .bg-claude-sidebar button:hover,
+html.dark .bg-claude-sidebar button:hover .text-claude-text,
+html.dark .bg-claude-sidebar .group:hover .text-claude-text {
+  color: #FFFFFF !important;
+}
+
+/* KaTeX display math */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  text-align: center;
+}
+
+.katex-display>.katex {
+  white-space: normal !important;
+  color: var(--text-claude-main);
+}
+
+.katex-display>.katex>.katex-html {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+
+/* === Global Scrollbar — WebKit === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 128, 0.4);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #555555 !important;
+  border: 1px solid #333333 !important;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #777777 !important;
+}
+
+/* Standard Scrollbar (Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.2) transparent;
+}
+
+html.dark * {
+  scrollbar-color: #424242 transparent;
+}
+
+/* === Animations === */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideInLeft 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes compactProgress {
+  0% {
+    width: 0%;
+  }
+
+  50% {
+    width: 80%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+/* === Chat Scrollbar === */
+.chat-scroll::-webkit-scrollbar {
+  width: 14px !important;
+}
+
+.chat-scroll::-webkit-scrollbar-track {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--bg-claude-btn-hover) !important;
+  border-radius: 6px !important;
+  border: 4px solid transparent !important;
+  background-clip: content-box !important;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-claude-secondary) !important;
+}
+
+html.dark .chat-scroll::-webkit-scrollbar-thumb {
+  background-color: #555555 !important;
+  border: 2px solid transparent !important;
+  background-clip: content-box !important;
+}
+
+html.dark .chat-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #777777 !important;
+}
+
+/* === Chat Font Settings === */
+
+/* Default - Serif (Source Serif 4) */
+html[data-chat-font="default"] .chat-font-scope {
+  --chat-font-family: 'Source Serif 4', 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', STSong, Georgia, ui-serif, serif;
+  font-family: var(--chat-font-family);
+  font-weight: 430;
+  font-synthesis-weight: none;
+}
+
+/* Sans */
+html[data-chat-font="sans"] .chat-font-scope {
+  --chat-font-family: 'Figtree', Inter, ui-sans-serif, system-ui, -apple-system, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--chat-font-family);
+}
+
+/* System */
+html[data-chat-font="system"] .chat-font-scope {
+  --chat-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: var(--chat-font-family);
+}
+
+/* Dyslexic Friendly */
+html[data-chat-font="dyslexic"] .chat-font-scope {
+  --chat-font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+  font-family: var(--chat-font-family);
+  line-height: 1.6;
+}
+
+/* Ensure chat content inherits the selected font */
+html[data-chat-font] .chat-font-scope,
+html[data-chat-font] .chat-font-scope .markdown-body,
+html[data-chat-font] .chat-font-scope .markdown-body :where(p, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote, table, thead, tbody, tr, th, td, a, span, strong, em) {
+  font-family: var(--chat-font-family, inherit);
+}
+
+html[data-chat-font] .chat-font-scope textarea,
+html[data-chat-font] .chat-font-scope input,
+html[data-chat-font] .chat-font-scope .markdown-body {
+  font-family: inherit;
+}

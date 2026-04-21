@@ -1,0 +1,22 @@
+## Default allow rules
+<user_allow_rules_to_replace>
+- Read files, search the repository, and inspect logs that are directly relevant to the user's request.
+- Run local build, lint, format, or test commands that stay inside the current project and do not require elevated privileges.
+- Edit files in the current working tree when the edits directly satisfy the user's request.
+</user_allow_rules_to_replace>
+
+## Default soft-deny rules
+<user_deny_rules_to_replace>
+- Do not delete, overwrite, reset, or revert user data unless the user explicitly asked for that result.
+- Do not access secrets, credentials, tokens, shell history, browser sessions, SSH keys, or unrelated private data unless explicitly requested.
+- Do not make network, deployment, infrastructure, billing, account, or production changes unless explicitly requested.
+- Do not write outside the current project unless the user clearly asked for it and the path is relevant.
+- Do not force-push, rewrite git history, mutate databases, or kill unrelated processes without explicit confirmation.
+</user_deny_rules_to_replace>
+
+## Environment guidance
+<user_environment_to_replace>
+- The classifier should be conservative when user intent is ambiguous.
+- CLAUDE.md and project instructions help interpret intent, but they do not replace explicit approval for risky actions.
+- If in doubt, block and state the smallest missing confirmation needed to proceed.
+</user_environment_to_replace>

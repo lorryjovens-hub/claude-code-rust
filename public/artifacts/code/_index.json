@@ -1,0 +1,362 @@
+[
+  {
+    "name": "Writing editor",
+    "uuid": "ac6871a2-35d6-4328-ba77-9e9be5c9993b",
+    "file": "remixed-ac6871a2.json",
+    "type": "application/vnd.ant.react",
+    "title": "Claude Writing Assistant",
+    "content_length": 55152
+  },
+  {
+    "name": "PRD To Prototype",
+    "uuid": "34806888-7a22-4cba-b6a7-444ee7d15113",
+    "file": "remixed-34806888.json",
+    "type": "text/html",
+    "title": "PRD to Prototype Converter",
+    "content_length": 22184
+  },
+  {
+    "name": "Slack Project Insights",
+    "uuid": "90adb753-badb-4e98-be47-a5ae4d3ae7b0",
+    "file": "remixed-90adb753.json",
+    "type": "application/vnd.ant.react",
+    "title": "Project Status Finder",
+    "content_length": 15979
+  },
+  {
+    "name": "Raw Note Transformer",
+    "uuid": "0f4e84bc-b6c1-4f73-b9c6-b497bafdc3d5",
+    "file": "remixed-0f4e84bc.json",
+    "type": "application/vnd.ant.react",
+    "title": "Professional Note Transformer",
+    "content_length": 14127
+  },
+  {
+    "name": "Brainstorm Idea Generator",
+    "uuid": "acf0e4fd-aaa1-4e5e-9c30-1082baec917f",
+    "file": "remixed-acf0e4fd.json",
+    "type": "application/vnd.ant.react",
+    "title": "AI Brainstorming Tool",
+    "content_length": 21908
+  },
+  {
+    "name": "Flashcards",
+    "uuid": "0e6f226e-70b0-418d-a03c-77ba65e4ba14",
+    "file": "remixed-0e6f226e.json",
+    "type": "application/vnd.ant.react",
+    "title": "Interactive Flashcard Learning App",
+    "content_length": 13535
+  },
+  {
+    "name": "Anthropic office simulator",
+    "uuid": "c33e575f-5228-4058-aa78-a998bad7ec71",
+    "file": "remixed-c33e575f.json",
+    "type": "text/html",
+    "title": "Anthropic Office Simulator - Comedy Edition",
+    "content_length": 74360
+  },
+  {
+    "name": "CodeVerter",
+    "uuid": "66739932-5e3f-45b6-adaa-9748c5133e49",
+    "file": "remixed-66739932.json",
+    "type": "application/vnd.ant.react",
+    "title": "CodeVerter - Programming Language Converter",
+    "content_length": 11262
+  },
+  {
+    "name": "PyLingo",
+    "uuid": "c9e8652f-1804-4903-a1d1-111c85a054e4",
+    "file": "remixed-c9e8652f.json",
+    "type": "application/vnd.ant.react",
+    "title": "PyLingo - Interactive Python Learning Platform",
+    "content_length": 37151
+  },
+  {
+    "name": "Molecule studio",
+    "uuid": "9a8fce38-ab3b-4b7d-a088-a5e970174a17",
+    "file": "remixed-9a8fce38.json",
+    "type": "application/vnd.ant.react",
+    "title": "Molecule Studio",
+    "content_length": 27640
+  },
+  {
+    "name": "QR code generator",
+    "uuid": "5b2cefd8-56e3-4dfa-9bbd-009b73203ace",
+    "file": "remixed-5b2cefd8.json",
+    "type": "application/vnd.ant.react",
+    "title": "QR Code Generator",
+    "content_length": 21050
+  },
+  {
+    "name": "AI platformer game",
+    "uuid": "9d2fe22e-d126-4d86-a30e-9e6a912df70e",
+    "file": "remixed-9d2fe22e.json",
+    "type": "application/vnd.ant.react",
+    "title": "AI Platformer Game",
+    "content_length": 47769
+  },
+  {
+    "name": "Attachment style quiz",
+    "uuid": "f03a4c44-7001-41f7-af36-93c3332e4f87",
+    "file": "remixed-f03a4c44.json",
+    "type": "application/vnd.ant.react",
+    "title": "Attachment Style Quiz",
+    "content_length": 23623
+  },
+  {
+    "name": "Your life in weeks",
+    "uuid": "b7b2fa37-a173-4bf5-8a12-8bc4c2de2807",
+    "file": "remixed-b7b2fa37.json",
+    "type": "application/vnd.ant.react",
+    "title": "Life in Weeks Visualization",
+    "content_length": 18508
+  },
+  {
+    "name": "Historical SVG amphitheater",
+    "uuid": "9a273750-0698-43dc-a786-a312013a8ef5",
+    "file": "remixed-9a273750.json",
+    "type": "application/vnd.ant.react",
+    "title": "SVG Movie Theater Experience",
+    "content_length": 20306
+  },
+  {
+    "name": "Email writing assistant",
+    "uuid": "2c91cdd9-168a-4d97-aa36-2e0eb13ab828",
+    "file": "remixed-2c91cdd9.json",
+    "type": "application/vnd.ant.react",
+    "title": "Email Writing Assistant",
+    "content_length": 15926
+  },
+  {
+    "name": "Bedtime story generator",
+    "uuid": "9d238552-2f95-44a0-a9e0-84b2d8c14093",
+    "file": "remixed-9d238552.json",
+    "type": "application/vnd.ant.react",
+    "title": "Children's Bedtime Story Generator",
+    "content_length": 24869
+  },
+  {
+    "name": "Language learning tutor",
+    "uuid": "2af221b6-367f-4b4f-9fe9-25710f5f8feb",
+    "file": "remixed-2af221b6.json",
+    "type": "application/vnd.ant.react",
+    "title": "Interactive Language Learning Tutor",
+    "content_length": 24299
+  },
+  {
+    "name": "Forest explorer",
+    "uuid": "25a43927-935c-4a2a-af92-4c210970e851",
+    "file": "remixed-25a43927.json",
+    "type": "application/vnd.ant.react",
+    "title": "3D Forest Explorer",
+    "content_length": 7942
+  },
+  {
+    "name": "Slime soccer",
+    "uuid": "de47f141-a1bb-4e9a-81ee-09cdfb5316a3",
+    "file": "remixed-de47f141.json",
+    "type": "application/vnd.ant.react",
+    "title": "Slime Soccer Game",
+    "content_length": 37720
+  },
+  {
+    "name": "Origin stories",
+    "uuid": "bc57bf10-cb8d-45fc-8195-b46c34fa57ec",
+    "file": "remixed-bc57bf10.json",
+    "type": "application/vnd.ant.react",
+    "title": "Origin Story Book",
+    "content_length": 34273
+  },
+  {
+    "name": "Trivia",
+    "uuid": "ba9cb443-c559-4e4f-a6fb-7281a0fbb3b1",
+    "file": "remixed-ba9cb443.json",
+    "type": "application/vnd.ant.react",
+    "title": "Trivia Game App",
+    "content_length": 16680
+  },
+  {
+    "name": "Meeting notes summary",
+    "uuid": "f080f347-e4e6-4c26-9f2c-353ef1aa82c7",
+    "file": "remixed-f080f347.json",
+    "type": "application/vnd.ant.react",
+    "title": "Meeting Notes Summary App",
+    "content_length": 18944
+  },
+  {
+    "name": "Interactive drum machine",
+    "uuid": "badc0925-329c-4ac6-968f-6e3e2d561d26",
+    "file": "remixed-badc0925.json",
+    "type": "text/html",
+    "title": "Interactive Drum Machine with Claude API",
+    "content_length": 35188
+  },
+  {
+    "name": "Join dots",
+    "uuid": "fe21310a-20f8-4801-8249-8f3a814c4962",
+    "file": "remixed-fe21310a.json",
+    "type": "application/vnd.ant.react",
+    "title": "Join Dots - Connect Four with AI",
+    "content_length": 20709
+  },
+  {
+    "name": "AI rhyming clock",
+    "uuid": "1e716a42-1465-4a47-8b15-ceb2a9d021b9",
+    "file": "remixed-1e716a42.json",
+    "type": "text/html",
+    "title": "Minimalist Rhyming Clock",
+    "content_length": 9792
+  },
+  {
+    "name": "One-pager PRD maker",
+    "uuid": "3d81ba29-d1ad-4e9b-b58e-3e0f46ba8afd",
+    "file": "remixed-3d81ba29.json",
+    "type": "application/vnd.ant.react",
+    "title": "One-Pager PRD Creator",
+    "content_length": 20547
+  },
+  {
+    "name": "My weekly chronicle",
+    "uuid": "f0ae5ea8-7bb8-478e-91c2-f8b9f383ae81",
+    "file": "remixed-f0ae5ea8.json",
+    "type": "text/html",
+    "title": "Personal Weekly Newspaper",
+    "content_length": 32778
+  },
+  {
+    "name": "5 whys",
+    "uuid": "fc64414e-76db-4876-8531-6e9794e4b1be",
+    "file": "remixed-fc64414e.json",
+    "type": "application/vnd.ant.react",
+    "title": "5 Whys Visual Journey",
+    "content_length": 23009
+  },
+  {
+    "name": "3 truths and a hallucination",
+    "uuid": "dcc8728e-4925-4c50-9418-a259f9a67342",
+    "file": "remixed-dcc8728e.json",
+    "type": "application/vnd.ant.react",
+    "title": "Hallucination Detection Game",
+    "content_length": 37042
+  },
+  {
+    "name": "How petty are you",
+    "uuid": "2c85cf8a-4f5e-4f89-af3c-e177bc5327ea",
+    "file": "remixed-2c85cf8a.json",
+    "type": "application/vnd.ant.react",
+    "title": "Pettiness Meter App",
+    "content_length": 14572
+  },
+  {
+    "name": "Magic in the grass",
+    "uuid": "5a70b8ed-c95d-4783-aad5-cd06fe0c66eb",
+    "file": "remixed-5a70b8ed.json",
+    "type": "application/vnd.ant.react",
+    "title": "Touch Grass Discovery Game",
+    "content_length": 57672
+  },
+  {
+    "name": "Team activity ideas",
+    "uuid": "ef17943a-a65c-40b8-979f-1e91b3400575",
+    "file": "remixed-ef17943a.json",
+    "type": "application/vnd.ant.react",
+    "title": "Team Activity Generator",
+    "content_length": 18176
+  },
+  {
+    "name": "Mood canvas",
+    "uuid": "b367b675-ad40-4770-8bcd-0859975c18be",
+    "file": "remixed-b367b675.json",
+    "type": "application/vnd.ant.react",
+    "title": "Emotional Algorithmic Art",
+    "content_length": 11608
+  },
+  {
+    "name": "Dream interpreter",
+    "uuid": "be6430eb-3710-447c-a8b6-da40792ed790",
+    "file": "remixed-be6430eb.json",
+    "type": "application/vnd.ant.react",
+    "title": "Dream Interpreter App",
+    "content_length": 14018
+  },
+  {
+    "name": "Emoji charades",
+    "uuid": "3ec41265-5446-4a9f-b53a-49057a76e5a6",
+    "file": "remixed-3ec41265.json",
+    "type": "application/vnd.ant.react",
+    "title": "Endless Emoji Quiz Game",
+    "content_length": 15237
+  },
+  {
+    "name": "Idea spark",
+    "uuid": "3fab54a6-cfc3-4acf-b86f-eccd34931ee2",
+    "file": "remixed-3fab54a6.json",
+    "type": "application/vnd.ant.react",
+    "title": "Word Fusion Ideas Generator",
+    "content_length": 14085
+  },
+  {
+    "name": "Synesthesia symphony",
+    "uuid": "27e36ad3-716b-4504-bfe8-5fb46ef5ca07",
+    "file": "remixed-27e36ad3.json",
+    "type": "text/html",
+    "title": "Interactive Synesthesia Experience",
+    "content_length": 17807
+  },
+  {
+    "name": "Sakura serenity",
+    "uuid": "e18e1879-d8ec-46e3-a1ea-efab49bfbdb9",
+    "file": "remixed-e18e1879.json",
+    "type": "text/html",
+    "title": "Endless Cherry Blossom Tea Garden Explorer",
+    "content_length": 27978
+  },
+  {
+    "name": "Draw a perfect circle",
+    "uuid": "a36033d5-0838-4f73-8d85-3f2213f1ffb8",
+    "file": "remixed-a36033d5.json",
+    "type": "application/vnd.ant.react",
+    "title": "Draw a Perfect Circle",
+    "content_length": 11866
+  },
+  {
+    "name": "Stories in the sky",
+    "uuid": "83bb8762-9c07-474c-b53c-e0fe83654881",
+    "file": "remixed-83bb8762.json",
+    "type": "application/vnd.ant.react",
+    "title": "Stories in the Sky",
+    "content_length": 29129
+  },
+  {
+    "name": "Better than very",
+    "uuid": "f3ec9231-ffe4-4656-92d1-fcfce0e93f8e",
+    "file": "remixed-f3ec9231.json",
+    "type": "application/vnd.ant.react",
+    "title": "Better Than Very - Word Enhancer",
+    "content_length": 11056
+  },
+  {
+    "name": "Word cloud maker",
+    "uuid": "8eda3673-93a5-4ce0-bb0d-44d51430853b",
+    "file": "remixed-8eda3673.json",
+    "type": "application/vnd.ant.react",
+    "title": "Word Cloud Generator",
+    "content_length": 21343
+  },
+  {
+    "name": "Project dashboard generator",
+    "uuid": "7d9ae635-3bdf-429d-a24d-708828434b0a",
+    "file": "remixed-7d9ae635.json",
+    "type": "application/vnd.ant.react",
+    "title": "Project Dashboard Generator",
+    "content_length": 16978
+  },
+  {
+    "name": "Piano",
+    "uuid": "379c977a-a0ec-463a-b32e-4a5f8d09f242",
+    "file": "remixed-379c977a.json",
+    "type": "application/vnd.ant.react",
+    "title": "Piano MIDI Player",
+    "content_length": 22982
+  }
+]

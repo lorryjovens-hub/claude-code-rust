@@ -1,0 +1,6 @@
+{
+  "name": "modifiers-napi",
+  "version": "0.0.0-restored",
+  "type": "module",
+  "main": "./index.ts"
+}
