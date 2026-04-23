@@ -1,4 +1,4 @@
-本项目包含TS的claude code 源代码。完整的网站项目介绍：
+本项目包含TS的claude code 源代码。完整的网站项目介绍：项目完整介绍，以及下载 https://claude-rust-gui.netlify.app/
 2026.4.24更新GUI客户端：<img width="1071" height="543" alt="ScreenShot_2026-04-23_214124_728" src="https://github.com/user-attachments/assets/2748c7a9-4269-4952-8af9-9e1cacc735fb" />
 <img width="2379" height="1787" alt="ScreenShot_2026-04-24_012552_679" src="https://github.com/user-attachments/assets/f32fe710-1be8-4ac7-a99c-3181bcdb3340" />
 <img width="2376" height="1790" alt="ScreenShot_2026-04-24_012534_235" src="https://github.com/user-attachments/assets/8cc2c093-2dbd-4188-9720-1f9d5111c4ed" />
