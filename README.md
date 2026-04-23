@@ -1,4 +1,10 @@
 本项目包含TS的claude code 源代码。完整的网站项目介绍：
+2026.4.24更新GUI客户端：<img width="1071" height="543" alt="ScreenShot_2026-04-23_214124_728" src="https://github.com/user-attachments/assets/2748c7a9-4269-4952-8af9-9e1cacc735fb" />
+<img width="2379" height="1787" alt="ScreenShot_2026-04-24_012552_679" src="https://github.com/user-attachments/assets/f32fe710-1be8-4ac7-a99c-3181bcdb3340" />
+<img width="2376" height="1790" alt="ScreenShot_2026-04-24_012534_235" src="https://github.com/user-attachments/assets/8cc2c093-2dbd-4188-9720-1f9d5111c4ed" />
+<img width="2409" height="1797" alt="ScreenShot_2026-04-24_012518_314" src="https://github.com/user-attachments/assets/a26e5676-6020-4c05-8186-af66a9eaaa85" />
+<img width="2397" height="1767" alt="ScreenShot_2026-04-24_012507_346" src="https://github.com/user-attachments/assets/7f5c4321-f433-4f0b-a3a8-91b290c1ba3e" />
+<img width="1725" height="1050" alt="ScreenShot_2026-04-23_235219_164" src="https://github.com/user-attachments/assets/67152893-e093-4011-ba75-a84eb3d9a023" />
 
 # Claude Code Rust 🦀
 
