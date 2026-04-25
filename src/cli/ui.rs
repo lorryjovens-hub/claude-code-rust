@@ -137,16 +137,10 @@ pub fn print_claude_message(content: &str) {
     println!();
 }
 
-/// Print a user message with styling
-pub fn print_user_message(content: &str) {
-    println!();
-    print!("  {}", "●".truecolor(255, 140, 66).bold());
-    println!(" {}", "You".truecolor(255, 180, 100).bold());
-    println!();
-
-    for line in content.lines() {
-        println!("  {}", line.bright_white());
-    }
+/// Print a user message header (content already shown in terminal input)
+pub fn print_user_message(_content: &str) {
+    // 不重复打印用户输入，因为输入时已经显示在终端了
+    // 只打印分隔线
     println!();
 }
 
@@ -190,21 +184,22 @@ fn format_inline_styles(text: &str) -> ColoredString {
 
 /// Print a typing indicator animation
 pub fn print_typing_indicator() {
-    print!("\r  {} ", "●".truecolor(147, 112, 219).bold());
-    print!("{}", "Claude is thinking".truecolor(150, 150, 150));
+    print!("  {} ", "●".truecolor(147, 112, 219).bold());
+    print!("{}", "thinking...".truecolor(150, 150, 150));
     io::stdout().flush().ok();
 
     let frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-    for frame in frames.iter().cycle().take(20) {
+    for frame in frames.iter().cycle().take(10) {
         print!("\r  {} {} {}",
             "●".truecolor(147, 112, 219).bold(),
-            "Claude is thinking".truecolor(150, 150, 150),
+            "thinking".truecolor(150, 150, 150),
             frame.truecolor(147, 112, 219)
         );
         io::stdout().flush().ok();
         thread::sleep(Duration::from_millis(80));
     }
-    print!("\r{}\r", " ".repeat(40));
+    // 清除整行
+    print!("\r\x1B[K");
     io::stdout().flush().ok();
 }
 

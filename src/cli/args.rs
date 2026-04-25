@@ -177,8 +177,34 @@ impl Cli {
                     println!("  - {} ({})", server.name, server.status);
                 }
             }
-            super::McpCommands::Add { name, command } => {
-                let config = crate::mcp::McpConfig::new(name, command);
+            super::McpCommands::Add { name, command, path } => {
+                // 确定 command 值：优先 path，其次 command，最后空字符串
+                let cmd = path.as_ref()
+                    .or(command.as_ref())
+                    .map(|s| s.as_str())
+                    .unwrap_or("");
+
+                let mut config = crate::mcp::McpConfig::new(name, cmd);
+
+                // 特殊处理 filesystem → 变成真正内置可用工具
+                if name == "filesystem" {
+                    let fs_path = path.as_deref()
+                        .or(command.as_deref())
+                        .unwrap_or("");
+                    config.command = fs_path.to_string();
+                    config.status = crate::config::McpServerStatus::Running;
+                    config.capabilities = vec![
+                        "read_file".to_string(),
+                        "write_file".to_string(),
+                        "list_directory".to_string(),
+                        "search_files".to_string(),
+                        "edit_file".to_string(),
+                    ];
+                    config.auto_start = true;
+                    config.filesystem_path = Some(std::path::PathBuf::from(fs_path));
+                    println!("✅ Filesystem MCP 已作为内置工具添加（路径: {}）", config.command);
+                }
+
                 manager.add_server(config).await?;
                 println!("Added MCP server: {}", name);
             }
