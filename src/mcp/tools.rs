@@ -205,22 +205,40 @@ impl ToolExecutor for BuiltinCommandExecutor {
         let command = params["command"].as_str()
             .ok_or_else(|| anyhow::anyhow!("Missing command parameter"))?;
         let cwd = params["cwd"].as_str();
-        
-        let output = if let Some(dir) = cwd {
-            tokio::process::Command::new("sh")
-                .arg("-c")
-                .arg(command)
-                .current_dir(dir)
-                .output()
-                .await
+
+        // Windows 用 cmd /C，Unix 用 sh -c
+        let output = if cfg!(target_os = "windows") {
+            if let Some(dir) = cwd {
+                tokio::process::Command::new("cmd")
+                    .arg("/C")
+                    .arg(command)
+                    .current_dir(dir)
+                    .output()
+                    .await
+            } else {
+                tokio::process::Command::new("cmd")
+                    .arg("/C")
+                    .arg(command)
+                    .output()
+                    .await
+            }
         } else {
-            tokio::process::Command::new("sh")
-                .arg("-c")
-                .arg(command)
-                .output()
-                .await
+            if let Some(dir) = cwd {
+                tokio::process::Command::new("sh")
+                    .arg("-c")
+                    .arg(command)
+                    .current_dir(dir)
+                    .output()
+                    .await
+            } else {
+                tokio::process::Command::new("sh")
+                    .arg("-c")
+                    .arg(command)
+                    .output()
+                    .await
+            }
         };
-        
+
         match output {
             Ok(output) => {
                 let stdout = String::from_utf8_lossy(&output.stdout).to_string();
@@ -248,14 +266,39 @@ impl ToolExecutor for BuiltinSearchExecutor {
         let pattern = params["pattern"].as_str()
             .ok_or_else(|| anyhow::anyhow!("Missing pattern parameter"))?;
         let path = params["path"].as_str().unwrap_or(".");
-        
-        let output = tokio::process::Command::new("rg")
-            .arg("-l")
-            .arg(pattern)
-            .arg(path)
-            .output()
-            .await;
-        
+
+        // Windows 用 findstr，Unix 用 rg 或 grep
+        let output = if cfg!(target_os = "windows") {
+            tokio::process::Command::new("findstr")
+                .arg("/s")
+                .arg("/m")
+                .arg(pattern)
+                .arg(&format!("{}\\*", path))
+                .output()
+                .await
+        } else {
+            // 尝试 rg，失败则用 grep
+            let rg_result = tokio::process::Command::new("rg")
+                .arg("-l")
+                .arg(pattern)
+                .arg(path)
+                .output()
+                .await;
+
+            match rg_result {
+                Ok(output) => Ok(output),
+                Err(_) => {
+                    tokio::process::Command::new("grep")
+                        .arg("-r")
+                        .arg("-l")
+                        .arg(pattern)
+                        .arg(path)
+                        .output()
+                        .await
+                }
+            }
+        };
+
         match output {
             Ok(output) => {
                 let files = String::from_utf8_lossy(&output.stdout)

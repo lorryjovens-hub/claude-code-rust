@@ -182,10 +182,13 @@ pub enum McpCommands {
 
     /// Add a new MCP server
     Add {
-        /// Server name
+        /// Server name (e.g. filesystem)
         name: String,
-        /// Server command
-        command: String,
+        /// Server command (可选，filesystem 可只用 --path)
+        command: Option<String>,
+        /// Filesystem 专用路径（新增 --path / -p 支持）
+        #[arg(long, short = 'p', value_name = "PATH")]
+        path: Option<String>,
     },
 
     /// Remove an MCP server
@@ -357,7 +360,6 @@ pub enum TeamSyncCommands {
         id: String,
     },
 }
-
 
 #[derive(Subcommand, Debug)]
 pub enum SkillsCommands {

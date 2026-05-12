@@ -2,23 +2,36 @@
 //!
 //! Beautiful REPL interface matching the original Claude Code aesthetic
 
-use crate::api::{ApiClient, ChatMessage};
+use crate::api::{ApiClient, ChatMessage, ToolDefinition, ToolCall};
 use crate::cli::ui;
 use crate::state::AppState;
+use crate::mcp::ToolRegistry;
 use colored::Colorize;
 use std::io::{self, BufRead, Write};
+use std::sync::Arc;
 
 pub struct Repl {
     state: AppState,
     conversation_history: Vec<ChatMessage>,
+    tool_registry: Arc<ToolRegistry>,
 }
 
 impl Repl {
     pub fn new(state: AppState) -> Self {
         ui::init_terminal();
+        let tool_registry = Arc::new(ToolRegistry::new());
+
+        // 注册内置工具（使用 tokio::task::block_in_place）
+        tokio::task::block_in_place(|| {
+            tokio::runtime::Handle::current().block_on(async {
+                tool_registry.register_builtin_tools().await;
+            });
+        });
+
         Self {
             state,
             conversation_history: Vec::new(),
+            tool_registry,
         }
     }
 
@@ -81,77 +94,216 @@ impl Repl {
 
         self.conversation_history.push(ChatMessage::user(input));
 
-        // Show typing indicator
-        ui::print_typing_indicator();
+        // 获取工具定义
+        let tools = self.get_tool_definitions();
 
-        let messages = self.conversation_history.clone();
-        let base_url = client.get_base_url();
-        let model = client.get_model().to_string();
-        let max_tokens = self.state.settings.api.max_tokens;
+        // 工具调用循环
+        loop {
+            // Show typing indicator
+            ui::print_typing_indicator();
 
-        let request_body = serde_json::json!({
-            "model": model,
-            "messages": messages,
-            "max_tokens": max_tokens,
-            "stream": false,
-            "temperature": 0.7
-        });
+            let messages = self.conversation_history.clone();
+            let base_url = client.get_base_url();
+            let model = client.get_model().to_string();
+            let max_tokens = self.state.settings.api.max_tokens;
 
-        let http_client = reqwest::blocking::Client::new();
-        let url = format!("{}/v1/chat/completions", base_url);
+            let mut request_body = serde_json::json!({
+                "model": model,
+                "messages": messages,
+                "max_tokens": max_tokens,
+                "stream": false,
+                "temperature": 0.7
+            });
 
-        match http_client
-            .post(&url)
-            .header("Authorization", format!("Bearer {}", api_key))
-            .header("Content-Type", "application/json")
-            .json(&request_body)
-            .send()
-        {
-            Ok(resp) => {
-                if !resp.status().is_success() {
-                    let status = resp.status();
-                    let body = resp.text().unwrap_or_default();
-                    ui::print_error(&format!("API error ({}): {}", status, body));
+            // 注入工具定义
+            if !tools.is_empty() {
+                request_body["tools"] = serde_json::to_value(&tools)?;
+            }
+
+            let http_client = reqwest::blocking::Client::new();
+            let url = format!("{}/v1/chat/completions", base_url);
+
+            let resp = match http_client
+                .post(&url)
+                .header("Authorization", format!("Bearer {}", api_key))
+                .header("Content-Type", "application/json")
+                .json(&request_body)
+                .send()
+            {
+                Ok(r) => r,
+                Err(e) => {
+                    ui::print_error(&format!("Request failed: {}", e));
                     return Ok(());
                 }
+            };
 
-                let json: serde_json::Value = resp.json().unwrap_or(serde_json::json!({}));
+            if !resp.status().is_success() {
+                let status = resp.status();
+                let body = resp.text().unwrap_or_default();
+                ui::print_error(&format!("API error ({}): {}", status, body));
+                return Ok(());
+            }
 
-                if let Some(choices) = json.get("choices").and_then(|c| c.as_array()) {
-                    if let Some(choice) = choices.first() {
-                        if let Some(content) = choice.get("message")
-                            .and_then(|m| m.get("content"))
-                            .and_then(|c| c.as_str())
-                        {
-                            // Print Claude's response with beautiful formatting
-                            ui::print_claude_message(content);
-                            self.conversation_history.push(ChatMessage::assistant(content.to_string()));
+            let json: serde_json::Value = resp.json().unwrap_or(serde_json::json!({}));
 
-                            // Print token usage if available
-                            if let Some(usage) = json.get("usage") {
-                                if let (Some(prompt), Some(completion)) = (
-                                    usage.get("prompt_tokens").and_then(|t| t.as_u64()),
-                                    usage.get("completion_tokens").and_then(|t| t.as_u64()),
-                                ) {
-                                    let total = prompt + completion;
-                                    println!("  {} {} prompt · {} generated · {} total",
-                                        "◦".truecolor(100, 100, 100),
-                                        prompt.to_string().truecolor(150, 150, 150),
-                                        completion.to_string().truecolor(150, 150, 150),
-                                        total.to_string().truecolor(180, 180, 180)
+            if let Some(choices) = json.get("choices").and_then(|c| c.as_array()) {
+                if let Some(choice) = choices.first() {
+                    let message = choice.get("message");
+
+                    // 检查是否有工具调用
+                    let tool_calls = message
+                        .and_then(|m| m.get("tool_calls"))
+                        .and_then(|tc| tc.as_array())
+                        .cloned();
+
+                    if let Some(calls) = tool_calls {
+                        if !calls.is_empty() {
+                            // 打印工具调用信息
+                            println!();
+                            for call in &calls {
+                                if let Some(func) = call.get("function") {
+                                    let tool_name = func.get("name")
+                                        .and_then(|n| n.as_str())
+                                        .unwrap_or("unknown");
+                                    println!("  {} Executing tool: {}",
+                                        "🔧".truecolor(255, 200, 100),
+                                        tool_name.cyan().bold()
                                     );
                                 }
+                            }
+                            println!();
+
+                            // 添加 assistant 消息（带 tool_calls）
+                            let tool_calls_parsed: Vec<ToolCall> = calls.iter().filter_map(|call| {
+                                let id = call.get("id")?.as_str()?.to_string();
+                                let r#type = call.get("type")?.as_str()?.to_string();
+                                let func = call.get("function")?;
+                                let name = func.get("name")?.as_str()?.to_string();
+                                let arguments = func.get("arguments")?.as_str()?.to_string();
+                                Some(ToolCall {
+                                    id,
+                                    r#type,
+                                    function: crate::api::ToolCallFunction {
+                                        name,
+                                        arguments,
+                                    },
+                                })
+                            }).collect();
+
+                            let assistant_msg = ChatMessage {
+                                role: "assistant".to_string(),
+                                content: message.and_then(|m| m.get("content")).and_then(|c| c.as_str()).map(|s| s.to_string()),
+                                tool_calls: Some(tool_calls_parsed),
+                                tool_call_id: None,
+                            };
+                            self.conversation_history.push(assistant_msg);
+
+                            // 执行每个工具调用并添加结果
+                            for call in &calls {
+                                if let (Some(id), Some(func)) = (
+                                    call.get("id").and_then(|i| i.as_str()),
+                                    call.get("function")
+                                ) {
+                                    let tool_name = func.get("name")
+                                        .and_then(|n| n.as_str())
+                                        .unwrap_or("unknown");
+                                    let args_str = func.get("arguments")
+                                        .and_then(|a| a.as_str())
+                                        .unwrap_or("{}");
+
+                                    let args: serde_json::Value = serde_json::from_str(args_str)
+                                        .unwrap_or(serde_json::json!({}));
+
+                                    // 执行工具
+                                    let result = self.execute_tool(tool_name, args);
+
+                                    // 添加工具结果消息
+                                    let tool_result_msg = ChatMessage::tool(id, result);
+                                    self.conversation_history.push(tool_result_msg);
+                                }
+                            }
+
+                            // 继续循环，让 AI 处理工具结果
+                            continue;
+                        }
+                    }
+
+                    // 没有工具调用，处理普通响应
+                    if let Some(content) = message
+                        .and_then(|m| m.get("content"))
+                        .and_then(|c| c.as_str())
+                    {
+                        ui::print_claude_message(content);
+                        self.conversation_history.push(ChatMessage::assistant(content.to_string()));
+
+                        // Print token usage if available
+                        if let Some(usage) = json.get("usage") {
+                            if let (Some(prompt), Some(completion)) = (
+                                usage.get("prompt_tokens").and_then(|t| t.as_u64()),
+                                usage.get("completion_tokens").and_then(|t| t.as_u64()),
+                            ) {
+                                let total = prompt + completion;
+                                println!("  {} {} prompt · {} generated · {} total",
+                                    "◦".truecolor(100, 100, 100),
+                                    prompt.to_string().truecolor(150, 150, 150),
+                                    completion.to_string().truecolor(150, 150, 150),
+                                    total.to_string().truecolor(180, 180, 180)
+                                );
                             }
                         }
                     }
                 }
             }
-            Err(e) => {
-                ui::print_error(&format!("Request failed: {}", e));
-            }
+
+            // 退出循环
+            break;
         }
 
         Ok(())
+    }
+
+    /// 获取 MCP 工具定义（转换为 API 格式）
+    fn get_tool_definitions(&self) -> Vec<ToolDefinition> {
+        tokio::task::block_in_place(|| {
+            tokio::runtime::Handle::current().block_on(async {
+                let tools = self.tool_registry.list().await;
+                tools.into_iter().map(|t| {
+                    ToolDefinition::new(
+                        t.name,
+                        t.description,
+                        t.input_schema
+                    )
+                }).collect()
+            })
+        })
+    }
+
+    /// 执行工具调用
+    fn execute_tool(&self, name: &str, args: serde_json::Value) -> String {
+        let name = name.to_string();
+        let registry = self.tool_registry.clone();
+
+        tokio::task::block_in_place(|| {
+            tokio::runtime::Handle::current().block_on(async {
+                match registry.execute(&name, args).await {
+                    Ok(result) => {
+                        // 打印工具结果摘要
+                        if let Some(success) = result.get("success").and_then(|s| s.as_bool()) {
+                            if success {
+                                println!("  {} Tool succeeded", "✓".green());
+                            } else {
+                                println!("  {} Tool failed", "✗".red());
+                            }
+                        }
+                        result.to_string()
+                    }
+                    Err(e) => {
+                        println!("  {} Tool error: {}", "✗".red(), e);
+                        serde_json::json!({"error": e.to_string()}).to_string()
+                    }
+                }
+            })
+        })
     }
 
     fn print_status(&self) {
@@ -183,7 +335,7 @@ impl Repl {
             println!();
 
             for (i, msg) in self.conversation_history.iter().enumerate() {
-                let (icon, color) = match msg.role.as_str() {
+                let (_icon, _color) = match msg.role.as_str() {
                     "user" => ("●", "truecolor(255, 140, 66)"),
                     "assistant" => ("●", "truecolor(147, 112, 219)"),
                     _ => ("●", "bright_black"),

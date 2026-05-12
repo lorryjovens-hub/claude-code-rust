@@ -2,7 +2,7 @@
 //!
 //! Manages registration and lookup of skills.
 
-use super::{Skill, SkillCategory, SkillError};
+use super::{Skill, SkillCategory};
 use std::collections::HashMap;
 use std::sync::Arc;
 

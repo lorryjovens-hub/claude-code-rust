@@ -391,7 +391,7 @@ impl ToolCallManager {
     }
 
     /// Render a diff view for file changes
-    pub fn render_diff(ui: &mut Ui, old_content: &str, new_content: &str, theme: &super::Theme) {
+    pub fn render_diff(ui: &mut Ui, old_content: &str, new_content: &str, _theme: &super::Theme) {
         use similar::{ChangeTag, TextDiff};
 
         let diff = TextDiff::from_lines(old_content, new_content);

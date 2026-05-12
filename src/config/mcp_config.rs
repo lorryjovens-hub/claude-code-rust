@@ -8,6 +8,8 @@ use std::path::PathBuf;
 pub struct McpConfig {
     /// Server name
     pub name: String,
+    /// 专为 filesystem 使用的受限路径
+    pub filesystem_path: Option<std::path::PathBuf>,
     /// Command to run the server
     pub command: String,
     /// Arguments for the command
@@ -56,6 +58,7 @@ impl Default for McpConfig {
             status: McpServerStatus::Unknown,
             capabilities: Vec::new(),
             auto_start: true,
+            filesystem_path: None,
         }
     }
 }
@@ -72,6 +75,7 @@ impl McpConfig {
             status: McpServerStatus::Unknown,
             capabilities: Vec::new(),
             auto_start: true,
+            filesystem_path: None,
         }
     }
 

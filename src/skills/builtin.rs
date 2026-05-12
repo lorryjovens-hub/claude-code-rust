@@ -47,7 +47,7 @@ impl Skill for CommitSkill {
         })
     }
 
-    async fn execute(&self, params: SkillParams, context: SkillContext) -> Result<SkillResult, SkillError> {
+    async fn execute(&self, params: SkillParams, _context: SkillContext) -> Result<SkillResult, SkillError> {
         // In a real implementation, this would:
         // 1. Get git status to see changes
         // 2. Generate commit message using AI if not provided
