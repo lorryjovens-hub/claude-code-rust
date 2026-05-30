@@ -1,0 +1,43 @@
+{
+  "productName": "Claude Rust",
+  "version": "3.1.0",
+  "identifier": "com.claude.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev -- --port 5200",
+    "devUrl": "http://127.0.0.1:5200",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Claude Rust 3.1.0",
+        "width": 1150,
+        "height": 700,
+        "minWidth": 800,
+        "minHeight": 600,
+        "visible": true,
+        "center": true,
+        "decorations": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline' http: https:; img-src 'self' asset: http: https: data: blob:; font-src 'self' http: https: data:; connect-src 'self' http://127.0.0.1:5200 http://127.0.0.1:30085 http://127.0.0.1:30090 ws://127.0.0.1:5201; frame-src 'self' blob: data:; media-src 'self' blob:; worker-src 'self' blob:;"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/icon.ico"
+    ],
+    "android": {
+      "minSdkVersion": 24
+    }
+  },
+  "plugins": {
+    "shell": {
+      "open": true
+    }
+  }
+}

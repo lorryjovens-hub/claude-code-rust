@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - BROWSERLESS_URL=http://browserless:3000
+      - PLAYWRIGHT_SERVER_URL=ws://playwright-server:3000
+    depends_on:
+      - browserless
+      - playwright-server
+    networks:
+      - agent-network
+
+  browserless:
+    image: browserless/chrome:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - MAX_CONCURRENT_SESSIONS=10
+      - CONNECTION_TIMEOUT=300000
+      - MAX_QUEUE_LENGTH=20
+      - PREBOOT_CHROME=true
+      - ENABLE_DEBUGGER=false
+      - TOKEN=agent-internal-token
+      - KEEP_ALIVE=true
+      - FUNCTION_ENABLE_INCOGNITO_MODE=true
+      - FUNCTION_BUILT_INS=pdf,screenshot
+    volumes:
+      - browserless-data:/home/chrome
+    restart: unless-stopped
+    networks:
+      - agent-network
+
+  playwright-server:
+    image: mcr.microsoft.com/playwright:latest
+    command: npx playwright run-server --port 3000
+    ports:
+      - "3001:3000"
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+    volumes:
+      - playwright-data:/ms-playwright
+    restart: unless-stopped
+    networks:
+      - agent-network
+
+volumes:
+  browserless-data:
+  playwright-data:
+
+networks:
+  agent-network:
+    driver: bridge

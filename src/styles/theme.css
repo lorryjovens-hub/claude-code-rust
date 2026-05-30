@@ -1,0 +1,470 @@
+/* === Claude IDE Dark Theme — CSS Variables === */
+/* Deep navy blues with warm amber accents — professional dark IDE aesthetic */
+
+:root {
+  /* ── Background ── */
+  --ide-bg: #1a1a2e;
+  --ide-bg-secondary: #16213e;
+  --ide-bg-tertiary: #0f3460;
+
+  /* ── Surface ── */
+  --ide-surface: #1e1e32;
+  --ide-surface-hover: #252545;
+
+  /* ── Text ── */
+  --ide-text: #e0e0e8;
+  --ide-text-secondary: #8888aa;
+  --ide-text-muted: #555577;
+
+  /* ── Border ── */
+  --ide-border: #2d2d44;
+  --ide-border-active: #3d3d5c;
+
+  /* ── Accent (warm amber) ── */
+  --ide-accent: #d97706;
+  --ide-accent-hover: #f59e0b;
+  --ide-accent-subtle: rgba(217, 119, 6, 0.15);
+
+  /* ── Semantic Colors ── */
+  --ide-success: #22c55e;
+  --ide-error: #ef4444;
+  --ide-warning: #f59e0b;
+  --ide-info: #3b82f6;
+
+  /* ── Scrollbar ── */
+  --ide-scrollbar-thumb: #333355;
+  --ide-scrollbar-thumb-hover: #444466;
+
+  /* ── Font Families ── */
+  --ide-font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --ide-font-ui: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* ── Border Radius ── */
+  --ide-radius-sm: 4px;
+  --ide-radius-md: 8px;
+  --ide-radius-lg: 12px;
+
+  /* ── Box Shadows ── */
+  --ide-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --ide-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --ide-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  /* ── Transitions ── */
+  --ide-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ide-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ide-duration-fast: 100ms;
+  --ide-duration-normal: 200ms;
+}
+
+/* ── Root-level IDE defaults (active by default for dark-first app) ── */
+html {
+  background-color: var(--ide-bg);
+}
+
+/* ── IDE Panel Base ── */
+.ide-panel {
+  background-color: var(--ide-bg);
+  color: var(--ide-text);
+  border: 1px solid var(--ide-border);
+  border-radius: var(--ide-radius-md);
+  box-shadow: var(--ide-shadow-sm);
+}
+
+.ide-panel:hover {
+  border-color: var(--ide-border-active);
+}
+
+/* ── IDE Surface Card ── */
+.ide-surface {
+  background-color: var(--ide-surface);
+  border: 1px solid var(--ide-border);
+  border-radius: var(--ide-radius-sm);
+  transition: background-color var(--ide-duration-normal) var(--ide-ease-out),
+              border-color var(--ide-duration-normal) var(--ide-ease-out);
+}
+
+.ide-surface:hover {
+  background-color: var(--ide-surface-hover);
+  border-color: var(--ide-border-active);
+}
+
+/* ── Smooth Resize Transition ── */
+.ide-panel {
+  transition: width var(--ide-duration-normal) var(--ide-ease-out),
+              height var(--ide-duration-normal) var(--ide-ease-out),
+              flex-basis var(--ide-duration-normal) var(--ide-ease-out),
+              background-color var(--ide-duration-normal) var(--ide-ease-out),
+              border-color var(--ide-duration-normal) var(--ide-ease-out);
+}
+
+/* ── File Tree Styles ── */
+.ide-file-tree {
+  background-color: var(--ide-bg-secondary);
+  color: var(--ide-text-secondary);
+  font-family: var(--ide-font-ui);
+  font-size: 13px;
+  line-height: 1.6;
+  border-right: 1px solid var(--ide-border);
+}
+
+.ide-file-tree .file-row {
+  padding: 2px 8px;
+  border-radius: var(--ide-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--ide-duration-fast) var(--ide-ease-out),
+              color var(--ide-duration-fast) var(--ide-ease-out);
+}
+
+.ide-file-tree .file-row:hover {
+  background-color: var(--ide-surface-hover);
+  color: var(--ide-text);
+}
+
+.ide-file-tree .file-row.active {
+  background-color: var(--ide-accent-subtle);
+  color: var(--ide-accent);
+}
+
+.ide-file-tree .folder-icon {
+  color: var(--ide-accent);
+}
+
+.ide-file-tree .file-icon {
+  color: var(--ide-text-muted);
+}
+
+/* ── Editor Styles ── */
+.ide-editor {
+  background-color: var(--ide-bg);
+  font-family: var(--ide-font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ide-editor .monaco-editor,
+.ide-editor .monaco-editor .margin,
+.ide-editor .monaco-editor .monaco-editor-background {
+  background-color: var(--ide-bg) !important;
+}
+
+.ide-editor .monaco-editor .line-numbers {
+  color: var(--ide-text-muted) !important;
+}
+
+.ide-editor .monaco-editor .current-line {
+  border: none !important;
+  background-color: var(--ide-surface) !important;
+}
+
+.ide-editor .monaco-editor .cursor {
+  background-color: var(--ide-accent) !important;
+}
+
+.ide-editor .monaco-editor .selection {
+  background: var(--ide-accent-subtle) !important;
+}
+
+/* ── Terminal Styles ── */
+.ide-terminal {
+  background-color: #0d1117;
+  color: var(--ide-text);
+  font-family: var(--ide-font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  border-top: 1px solid var(--ide-border);
+  border-radius: 0 0 var(--ide-radius-md) var(--ide-radius-md);
+}
+
+.ide-terminal .xterm-viewport::-webkit-scrollbar-thumb {
+  background-color: var(--ide-scrollbar-thumb) !important;
+}
+
+.ide-terminal .xterm-viewport::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ide-scrollbar-thumb-hover) !important;
+}
+
+/* ── Preview / Output Panel ── */
+.ide-preview {
+  background-color: var(--ide-bg);
+  border-left: 1px solid var(--ide-border);
+}
+
+.ide-preview iframe {
+  background-color: #ffffff;
+  border-radius: var(--ide-radius-sm);
+}
+
+/* ── IDE Tab Bar ── */
+.ide-tab-bar {
+  background-color: var(--ide-bg-secondary);
+  border-bottom: 1px solid var(--ide-border);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px 0 8px;
+  font-family: var(--ide-font-ui);
+  font-size: 12px;
+}
+
+.ide-tab {
+  padding: 6px 14px;
+  border-radius: var(--ide-radius-sm) var(--ide-radius-sm) 0 0;
+  color: var(--ide-text-muted);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all var(--ide-duration-fast) var(--ide-ease-out);
+  border: 1px solid transparent;
+  border-bottom: none;
+}
+
+.ide-tab:hover {
+  color: var(--ide-text-secondary);
+  background-color: var(--ide-surface);
+}
+
+.ide-tab.active {
+  color: var(--ide-text);
+  background-color: var(--ide-bg);
+  border-color: var(--ide-border);
+}
+
+.ide-tab .tab-close {
+  opacity: 0;
+  transition: opacity var(--ide-duration-fast) var(--ide-ease-out);
+}
+
+.ide-tab:hover .tab-close,
+.ide-tab.active .tab-close {
+  opacity: 1;
+}
+
+/* ── IDE Status Bar ── */
+.ide-status-bar {
+  background-color: var(--ide-bg-tertiary);
+  color: var(--ide-text-secondary);
+  font-family: var(--ide-font-ui);
+  font-size: 11px;
+  padding: 2px 12px;
+  border-top: 1px solid var(--ide-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ide-status-bar .status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ide-status-bar .status-accent {
+  color: var(--ide-accent);
+}
+
+/* ── IDE Divider / Resize Handle ── */
+.ide-divider {
+  background-color: var(--ide-border);
+  transition: background-color var(--ide-duration-fast) var(--ide-ease-out);
+  cursor: col-resize;
+}
+
+.ide-divider:hover,
+.ide-divider:active {
+  background-color: var(--ide-accent);
+}
+
+.ide-divider.vertical {
+  cursor: row-resize;
+}
+
+/* ── IDE Input / Search ── */
+.ide-input {
+  background-color: var(--ide-surface);
+  color: var(--ide-text);
+  border: 1px solid var(--ide-border);
+  border-radius: var(--ide-radius-sm);
+  font-family: var(--ide-font-ui);
+  font-size: 13px;
+  padding: 6px 10px;
+  transition: border-color var(--ide-duration-fast) var(--ide-ease-out),
+              box-shadow var(--ide-duration-fast) var(--ide-ease-out);
+}
+
+.ide-input:focus {
+  outline: none;
+  border-color: var(--ide-accent);
+  box-shadow: 0 0 0 2px var(--ide-accent-subtle);
+}
+
+.ide-input::placeholder {
+  color: var(--ide-text-muted);
+}
+
+/* ── IDE Button ── */
+.ide-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-family: var(--ide-font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--ide-radius-sm);
+  border: 1px solid var(--ide-border);
+  background-color: var(--ide-surface);
+  color: var(--ide-text-secondary);
+  cursor: pointer;
+  transition: all var(--ide-duration-fast) var(--ide-ease-out);
+}
+
+.ide-btn:hover {
+  background-color: var(--ide-surface-hover);
+  color: var(--ide-text);
+  border-color: var(--ide-border-active);
+}
+
+.ide-btn.primary {
+  background-color: var(--ide-accent);
+  color: #1a1a2e;
+  border-color: var(--ide-accent);
+}
+
+.ide-btn.primary:hover {
+  background-color: var(--ide-accent-hover);
+  border-color: var(--ide-accent-hover);
+}
+
+.ide-btn.ghost {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.ide-btn.ghost:hover {
+  background-color: var(--ide-surface);
+  border-color: var(--ide-border);
+}
+
+/* ── IDE Scrollbar ── */
+.ide-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ide-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ide-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--ide-scrollbar-thumb);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.ide-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ide-scrollbar-thumb-hover);
+}
+
+.ide-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── IDE Tooltip ── */
+.ide-tooltip {
+  background-color: var(--ide-surface-hover);
+  color: var(--ide-text);
+  border: 1px solid var(--ide-border-active);
+  border-radius: var(--ide-radius-sm);
+  padding: 6px 10px;
+  font-family: var(--ide-font-ui);
+  font-size: 12px;
+  box-shadow: var(--ide-shadow-md);
+}
+
+/* ── IDE Context Menu ── */
+.ide-context-menu {
+  background-color: var(--ide-surface);
+  border: 1px solid var(--ide-border-active);
+  border-radius: var(--ide-radius-md);
+  box-shadow: var(--ide-shadow-lg);
+  padding: 4px;
+  min-width: 180px;
+}
+
+.ide-context-menu .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--ide-radius-sm);
+  color: var(--ide-text-secondary);
+  font-family: var(--ide-font-ui);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--ide-duration-fast) var(--ide-ease-out);
+}
+
+.ide-context-menu .menu-item:hover {
+  background-color: var(--ide-surface-hover);
+  color: var(--ide-text);
+}
+
+.ide-context-menu .menu-item.danger {
+  color: var(--ide-error);
+}
+
+.ide-context-menu .menu-item.danger:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.ide-context-menu .menu-separator {
+  height: 1px;
+  background-color: var(--ide-border);
+  margin: 4px 6px;
+}
+
+/* ── IDE Badge / Pill ── */
+.ide-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  font-family: var(--ide-font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 9999px;
+  background-color: var(--ide-accent-subtle);
+  color: var(--ide-accent);
+}
+
+.ide-badge.success {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: var(--ide-success);
+}
+
+.ide-badge.error {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--ide-error);
+}
+
+.ide-badge.warning {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--ide-warning);
+}
+
+.ide-badge.info {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--ide-info);
+}
+
+/* ── IDE Loading Skeleton ── */
+@keyframes ide-skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.ide-skeleton {
+  background-color: var(--ide-surface);
+  border-radius: var(--ide-radius-sm);
+  animation: ide-skeleton-pulse 1.5s var(--ide-ease-in-out) infinite;
+}

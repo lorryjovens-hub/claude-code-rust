@@ -1,0 +1,112 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build outputs
+dist
+build
+*.msi
+*.exe
+*.dmg
+*.app
+*.deb
+*.rpm
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local env files
+.env
+.env.*
+!.env.example
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Tauri
+src-tauri/target*/
+src-tauri/target-stage/
+src-tauri/gen/
+
+# Runtime data (may contain user configs with API keys)
+src-tauri/data/
+src-tauri/providers.json
+src-tauri/sessions.json
+src-tauri/bridge_api_key.txt
+
+# SQLite databases (runtime generated)
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Trae IDE specs (development only)
+.trae/
+
+# Debug/temp files
+debug-*.md
+*.tmp
+*.tmp.*
+*.bak
+
+# Development scripts (not needed for deployment)
+fix-*.cjs
+fix_path.ps1
+check_build.py
+fix-api.cjs
+fix-ts-errors.cjs
+build_log.txt
+
+# API proxy (separate service, not part of main app)
+api-proxy/
+
+# Python memex (separate service)
+memex/
+src-tauri/memex/
+memex/__pycache__/
+*.pyc
+
+# Docs (AI-generated design specs, not needed in repo)
+docs/
+
+# Artifacts (build outputs)
+public/artifacts/code/
+public/artifacts/previews/
+
+# Design assets (large static files, not needed in repo)
+public/design-assets/
+
+# Worker output
+src/workers/*.js
+
+# Data files (remixed json, runtime generated)
+src/data/remixed-*.json
+src/data/_index.json
+
+# Standalone mini-apps (not part of main client)
+src-tauri/prd-creator/
+src-tauri/remotion-studio/
+src-tauri/worker/
+
+# Empty/placeholder component directories (no actual implementation)
+src/components/app-studio/
+src/components/swarm/

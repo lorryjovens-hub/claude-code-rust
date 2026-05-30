@@ -1,0 +1,1095 @@
+/* === Local Font Imports (must come first - CSS spec requirement) === */
+@import '@fontsource-variable/figtree';
+@import '@fontsource-variable/source-serif-4';
+@import '@fontsource/spectral/400.css';
+@import '@fontsource/spectral/500.css';
+@import '@fontsource/spectral/600.css';
+@import '@fontsource/spectral/700.css';
+@import '@fontsource/spectral/800.css';
+@import '@fontsource/spectral/400-italic.css';
+
+/* === IDE Dark Theme (imports all --ide-* CSS variables) === */
+@import './styles/theme.css';
+
+/* === Tailwind CSS Directives === */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === CSS Variables (Theme) === */
+:root {
+  --bg-claude-main: #F8F8F6;
+  --bg-claude-sidebar: #F7F7F4;
+  --border-claude: #E5E4E0;
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --text-claude-main: #2a2a2a;
+  --text-claude-model-body: #2a2a2a;
+  --text-claude-secondary: #8B8B82;
+  --bg-claude-accent: #CC7C5E;
+  --bg-claude-hover: #EFEEEB;
+  --bg-claude-btn-hover: #EAE9E6;
+  --bg-claude-input: #FFFFFF;
+  --bg-claude-avatar: #333333;
+  --text-claude-avatar: #FFFFFF;
+  --bg-mode-tabs: #EFEEEB;
+  --bg-mode-tab-active: #F8F8F6;
+  --bg-tooltip: #2a2a2a;
+  --text-tooltip: #FFFFFF;
+  --text-nav-active: #73726C;
+  --text-nav-disabled: #B7B5B0;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  /* Message card specific */
+  --msg-user-bg: #F0EEE7;
+  --msg-user-radius: 16px;
+  --msg-gap: 20px;
+  /* Elevation / Shadow system */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.12);
+  /* Transition system */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  /* IDE-specific variables (light fallback — dark app overrides in .dark) */
+  --ide-bg: #1a1a2e;
+  --ide-bg-secondary: #16213e;
+  --ide-bg-tertiary: #0f3460;
+  --ide-surface: #1e1e32;
+  --ide-surface-hover: #252545;
+  --ide-text: #e0e0e8;
+  --ide-text-secondary: #8888aa;
+  --ide-text-muted: #555577;
+  --ide-border: #2d2d44;
+  --ide-border-active: #3d3d5c;
+  --ide-accent: #d97706;
+  --ide-accent-hover: #f59e0b;
+  --ide-accent-subtle: rgba(217, 119, 6, 0.15);
+  --ide-success: #22c55e;
+  --ide-error: #ef4444;
+  --ide-warning: #f59e0b;
+  --ide-info: #3b82f6;
+  --ide-scrollbar-thumb: #333355;
+  --ide-scrollbar-thumb-hover: #444466;
+  --ide-font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --ide-font-ui: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ide-radius-sm: 4px;
+  --ide-radius-md: 8px;
+  --ide-radius-lg: 12px;
+  --ide-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --ide-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --ide-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --ide-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ide-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ide-duration-fast: 100ms;
+  --ide-duration-normal: 200ms;
+}
+
+.dark {
+  --bg-claude-main: #1F1F1E;
+  --bg-claude-sidebar: #1E1E1C;
+  --border-claude: #3A3A36;
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --text-claude-main: #FFFFFF;
+  --text-claude-model-body: #E8E4DA;
+  --text-claude-secondary: #8D8B82;
+  --bg-claude-accent: #CC7C5E;
+  --bg-claude-hover: #121212;
+  --bg-claude-btn-hover: #121212;
+  --bg-claude-input: #2C2C2A;
+  --bg-claude-avatar: #D4D4D4;
+  --text-claude-avatar: #222222;
+  --bg-mode-tabs: #121212;
+  --bg-mode-tab-active: #1F1F1E;
+  --bg-tooltip: #e8e8e8;
+  --text-tooltip: #1a1a1a;
+  --text-nav-active: #73726C;
+  --text-nav-disabled: #B7B5B0;
+  color-scheme: dark;
+  /* Message card specific */
+  --msg-user-bg: #2C2C2A;
+  --msg-user-radius: 16px;
+  --msg-gap: 20px;
+  /* Elevation / Shadow system */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.12);
+  /* Transition system */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  /* IDE-specific variables (dark mode — full navy-blue theme) */
+  --ide-bg: #1a1a2e;
+  --ide-bg-secondary: #16213e;
+  --ide-bg-tertiary: #0f3460;
+  --ide-surface: #1e1e32;
+  --ide-surface-hover: #252545;
+  --ide-text: #e0e0e8;
+  --ide-text-secondary: #8888aa;
+  --ide-text-muted: #555577;
+  --ide-border: #2d2d44;
+  --ide-border-active: #3d3d5c;
+  --ide-accent: #d97706;
+  --ide-accent-hover: #f59e0b;
+  --ide-accent-subtle: rgba(217, 119, 6, 0.15);
+  --ide-success: #22c55e;
+  --ide-error: #ef4444;
+  --ide-warning: #f59e0b;
+  --ide-info: #3b82f6;
+  --ide-scrollbar-thumb: #333355;
+  --ide-scrollbar-thumb-hover: #444466;
+  --ide-font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --ide-font-ui: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ide-radius-sm: 4px;
+  --ide-radius-md: 8px;
+  --ide-radius-lg: 12px;
+  --ide-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --ide-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --ide-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --ide-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ide-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ide-duration-fast: 100ms;
+  --ide-duration-normal: 200ms;
+}
+
+/* === Enhanced Base Styles === */
+body {
+  font-family: 'Figtree', sans-serif;
+  background-color: var(--bg-claude-main);
+  color: var(--text-claude-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Smooth transition on theme change — only for layout containers */
+html, body, #root, div, section, article, nav, aside, header, footer, main,
+button, a, input, select, textarea, span, p, h1, h2, h3, h4, h5, h6,
+ul, ol, li, table, th, td, form, fieldset, label {
+  transition: background-color var(--duration-normal) var(--ease-out),
+              color var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
+}
+
+/* No transition on interactive elements for instant feedback */
+button:active, a:active {
+  transition-duration: 0ms;
+}
+
+.font-serif-claude {
+  font-family: 'Source Serif 4', serif;
+}
+
+/* === Sidebar Scrollbar === */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: var(--text-claude-secondary);
+  opacity: 0.5;
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-claude-main);
+  opacity: 0.7;
+}
+
+html.dark .sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent !important;
+}
+
+html.dark .sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: #4A4A4A !important;
+  opacity: 0.8;
+}
+
+html.dark .sidebar-scroll:hover::-webkit-scrollbar-thumb:hover {
+  background-color: #5A5A5A !important;
+  opacity: 1;
+}
+
+/* === Markdown Styles === */
+.markdown-body p {
+  margin-bottom: 0.6em;
+  line-height: 1.5;
+  color: var(--text-claude-main);
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 1.0em;
+  margin-bottom: 0.4em;
+  font-weight: 600;
+  color: var(--text-claude-main);
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  margin-bottom: 0.6em;
+  padding-left: 1.5em;
+  list-style-type: disc;
+  color: var(--text-claude-main);
+}
+
+.markdown-body pre {
+  background-color: var(--bg-claude-input);
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 0.6em;
+  font-family: monospace;
+  border: 1px solid var(--border-claude);
+}
+
+.markdown-body code {
+  background-color: var(--bg-claude-hover);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--text-claude-main);
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.assistant-markdown {
+  color: var(--text-claude-model-body);
+}
+
+.assistant-markdown p,
+.assistant-markdown h1,
+.assistant-markdown h2,
+.assistant-markdown h3,
+.assistant-markdown h4,
+.assistant-markdown h5,
+.assistant-markdown h6,
+.assistant-markdown ul,
+.assistant-markdown ol,
+.assistant-markdown li,
+.assistant-markdown blockquote,
+.assistant-markdown strong,
+.assistant-markdown em,
+.assistant-markdown .katex-display>.katex {
+  color: var(--text-claude-model-body);
+}
+
+/* Standard inline code */
+.inline-code {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgb(208, 207, 204) !important;
+  color: rgb(132, 33, 35) !important;
+}
+
+html.dark .inline-code {
+  background-color: rgb(46, 46, 43) !important;
+  border-color: rgb(56, 55, 52) !important;
+  color: rgb(234, 134, 130) !important;
+}
+
+/* Sidebar dark mode overrides */
+html.dark .bg-claude-sidebar {
+  color: rgb(190, 189, 180) !important;
+}
+
+html.dark .bg-claude-sidebar button {
+  color: rgb(190, 189, 180);
+}
+
+html.dark .bg-claude-sidebar .text-claude-text {
+  color: rgb(190, 189, 180) !important;
+}
+
+html.dark .bg-claude-sidebar button:hover,
+html.dark .bg-claude-sidebar button:hover .text-claude-text,
+html.dark .bg-claude-sidebar .group:hover .text-claude-text {
+  color: #FFFFFF !important;
+}
+
+/* KaTeX display math */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  text-align: center;
+}
+
+.katex-display>.katex {
+  white-space: normal !important;
+  color: var(--text-claude-main);
+}
+
+.katex-display>.katex>.katex-html {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+
+/* === Message List Polish === */
+
+/* Warm accent for message highlights */
+.msg-accent-border {
+  border-left: 2px solid var(--bg-claude-accent);
+  padding-left: 12px;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Clean assistant message card */
+.msg-assistant-card {
+  border: 1px solid var(--border-claude);
+  border-radius: 12px;
+  background: var(--bg-claude-input);
+  padding: 16px 20px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.msg-assistant-card:hover {
+  border-color: rgba(204, 124, 94, 0.3);
+  box-shadow: 0 1px 8px rgba(204, 124, 94, 0.06);
+}
+
+/* Subtle message separator */
+.msg-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-subtle) 20%, var(--border-subtle) 80%, transparent 100%);
+  margin: 24px 0;
+}
+
+/* Thinner border utility */
+.border-subtle {
+  border-width: 0.5px !important;
+  border-color: var(--border-subtle);
+}
+
+/* Smooth code block border accent on hover */
+.code-block-wrapper {
+  transition: border-color 0.2s ease;
+}
+.code-block-wrapper:hover {
+  border-color: rgba(204, 124, 94, 0.25) !important;
+}
+
+/* === Live Preview Glowing Border Animation === */
+@keyframes preview-border-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.preview-generating-border {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.preview-generating-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  background: linear-gradient(
+    60deg,
+    rgba(204, 124, 94, 0.6),
+    rgba(96, 165, 250, 0.6),
+    rgba(168, 85, 247, 0.6),
+    rgba(204, 124, 94, 0.6)
+  );
+  background-size: 300% 300%;
+  animation: preview-border-flow 3s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+.preview-generating-border::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 10px;
+  background: var(--bg-claude-input);
+  z-index: 0;
+}
+.preview-generating-border > * {
+  position: relative;
+  z-index: 1;
+  margin: 3px;
+  border-radius: 9px;
+}
+
+/* === Global Scrollbar — WebKit === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 128, 0.4);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #555555 !important;
+  border: 1px solid #333333 !important;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #777777 !important;
+}
+
+/* Standard Scrollbar (Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.2) transparent;
+}
+
+html.dark * {
+  scrollbar-color: #424242 transparent;
+}
+
+/* === Animations === */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in { animation: slideInLeft 0.6s ease-out forwards; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
+
+@keyframes compactProgress {
+  0% { width: 0%; }
+  50% { width: 80%; }
+  100% { width: 100%; }
+}
+
+/* === Streaming Text Effects === */
+
+/* Typing cursor at end of streaming text */
+@keyframes typing-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.typing-cursor::after {
+  content: '▍';
+  display: inline;
+  animation: typing-blink 1s ease-in-out infinite;
+  color: var(--bg-claude-accent);
+  font-weight: bold;
+  margin-left: 1px;
+}
+
+/* Shimmer text effect for dynamic content */
+@keyframes shimmer-text {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.animate-shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--text-claude-main) 0%,
+    var(--bg-claude-accent) 25%,
+    var(--text-claude-main) 50%,
+    var(--bg-claude-accent) 75%,
+    var(--text-claude-main) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-text 3s ease-in-out infinite;
+}
+
+/* Scan light reveal effect */
+@keyframes scan-light {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+.scan-light-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.scan-light-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  animation: scan-light 2.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+html.dark .scan-light-wrapper::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+}
+
+/* Pulsing glow for active streaming */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 rgba(204, 124, 94, 0); }
+  50% { box-shadow: 0 0 12px rgba(204, 124, 94, 0.15); }
+}
+.streaming-active {
+  animation: pulse-glow 2s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* Rotating ring loader */
+@keyframes spin-ring {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.loading-ring {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-claude);
+  border-top-color: var(--bg-claude-accent);
+  border-radius: 50%;
+  animation: spin-ring 0.8s linear infinite;
+}
+
+/* Slide expand/collapse with smooth height */
+@keyframes expand-in {
+  from { opacity: 0; transform: translateY(-8px); max-height: 0; }
+  to { opacity: 1; transform: translateY(0); max-height: 500px; }
+}
+@keyframes collapse-out {
+  from { opacity: 1; transform: translateY(0); max-height: 500px; }
+  to { opacity: 0; transform: translateY(-8px); max-height: 0; }
+}
+.animate-expand-in {
+  animation: expand-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  overflow: hidden;
+}
+
+/* Code block scan line */
+@keyframes code-scan {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { top: 100%; opacity: 0; }
+}
+.code-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--bg-claude-accent), transparent);
+  animation: code-scan 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* === Chat Scrollbar === */
+.chat-scroll::-webkit-scrollbar {
+  width: 14px !important;
+}
+
+.chat-scroll::-webkit-scrollbar-track {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--bg-claude-btn-hover) !important;
+  border-radius: 6px !important;
+  border: 4px solid transparent !important;
+  background-clip: content-box !important;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-claude-secondary) !important;
+}
+
+html.dark .chat-scroll::-webkit-scrollbar-thumb {
+  background-color: #555555 !important;
+  border: 2px solid transparent !important;
+  background-clip: content-box !important;
+}
+
+html.dark .chat-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #777777 !important;
+}
+
+/* === Chat Font Settings === */
+
+/* Default - Serif (Source Serif 4) */
+html[data-chat-font="default"] .chat-font-scope {
+  --chat-font-family: 'Source Serif 4', 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', STSong, Georgia, ui-serif, serif;
+  font-family: var(--chat-font-family);
+  font-weight: 430;
+  font-synthesis-weight: none;
+}
+
+/* Sans */
+html[data-chat-font="sans"] .chat-font-scope {
+  --chat-font-family: 'Figtree', Inter, ui-sans-serif, system-ui, -apple-system, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--chat-font-family);
+}
+
+/* System */
+html[data-chat-font="system"] .chat-font-scope {
+  --chat-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: var(--chat-font-family);
+}
+
+/* Dyslexic Friendly */
+html[data-chat-font="dyslexic"] .chat-font-scope {
+  --chat-font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+  font-family: var(--chat-font-family);
+  line-height: 1.6;
+}
+
+/* Ensure chat content inherits the selected font */
+html[data-chat-font] .chat-font-scope,
+html[data-chat-font] .chat-font-scope .markdown-body,
+html[data-chat-font] .chat-font-scope .markdown-body :where(p, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote, table, thead, tbody, tr, th, td, a, span, strong, em) {
+  font-family: var(--chat-font-family, inherit);
+}
+
+html[data-chat-font] .chat-font-scope textarea,
+html[data-chat-font] .chat-font-scope input,
+html[data-chat-font] .chat-font-scope .markdown-body {
+  font-family: inherit;
+}
+
+/* === Responsive Layout === */
+
+/* Mobile base styles */
+@media (max-width: 767px) {
+  .chat-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chat-scroll::-webkit-scrollbar {
+    width: 0 !important;
+  }
+
+  /* Touch-friendly sizing */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Message bubble adjustments */
+  .max-w-\[85\%\] {
+    max-width: 92% !important;
+  }
+
+  /* Input area adjustments */
+  textarea {
+    font-size: 16px !important; /* Prevent iOS zoom on focus */
+    touch-action: manipulation;
+  }
+
+  /* Button touch targets */
+  button, [role="button"] {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Reduce padding on mobile */
+  .px-1.text-claude-text {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+
+  /* Ensure scrollable areas work on mobile */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .max-w-\[85\%\] {
+    max-width: 88% !important;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  /* Restore full desktop features */
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-top {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+
+  .safe-area-left {
+    padding-left: max(0.5rem, env(safe-area-inset-left));
+  }
+
+  .safe-area-right {
+    padding-right: max(0.5rem, env(safe-area-inset-right));
+  }
+}
+
+/* Mobile slide-in animation for sidebar */
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.mobile-sidebar-enter {
+  animation: slideInFromLeft 0.3s ease-out forwards;
+}
+
+.mobile-sidebar-exit {
+  animation: slideOutToLeft 0.3s ease-in forwards;
+}
+
+/* Virtual scroll container optimization */
+.virtual-list-container {
+  contain: strict;
+  will-change: contents;
+}
+
+/* Lazy image loading placeholder */
+.lazy-image-placeholder {
+  background: linear-gradient(90deg, var(--bg-claude-hover) 25%, var(--bg-claude-sidebar) 50%, var(--bg-claude-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer-loading 1.5s infinite;
+}
+
+@keyframes shimmer-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes scale-in {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-scale-in {
+  animation: scale-in 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Card hover interaction */
+.card-hover {
+  transition: transform 150ms var(--ease-out), box-shadow 250ms var(--ease-out);
+}
+.card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Button press effect */
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Glass morphism panel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+html.dark .glass-panel {
+  background: rgba(30, 30, 28, 0.7);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* === IDE Panel Styles — File Tree / Editor / Terminal / Preview === */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* ── IDE Panel Base ── */
+.ide-panel {
+  background-color: var(--ide-bg);
+  color: var(--ide-text);
+  border: 1px solid var(--ide-border);
+  border-radius: var(--ide-radius-md);
+  box-shadow: var(--ide-shadow-sm);
+  transition: width var(--ide-duration-normal) var(--ide-ease-out),
+              height var(--ide-duration-normal) var(--ide-ease-out),
+              flex-basis var(--ide-duration-normal) var(--ide-ease-out),
+              background-color var(--ide-duration-normal) var(--ide-ease-out),
+              border-color var(--ide-duration-normal) var(--ide-ease-out);
+}
+
+.ide-panel:hover {
+  border-color: var(--ide-border-active);
+}
+
+/* ── File Tree ── */
+.ide-file-tree {
+  background-color: var(--ide-bg-secondary);
+  color: var(--ide-text-secondary);
+  font-family: var(--ide-font-ui);
+  font-size: 13px;
+  line-height: 1.6;
+  border-right: 1px solid var(--ide-border);
+}
+
+.ide-file-tree .file-row {
+  padding: 2px 8px;
+  border-radius: var(--ide-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--ide-duration-fast) var(--ide-ease-out),
+              color var(--ide-duration-fast) var(--ide-ease-out);
+}
+
+.ide-file-tree .file-row:hover {
+  background-color: var(--ide-surface-hover);
+  color: var(--ide-text);
+}
+
+.ide-file-tree .file-row.active {
+  background-color: var(--ide-accent-subtle);
+  color: var(--ide-accent);
+}
+
+.ide-file-tree .folder-icon {
+  color: var(--ide-accent);
+}
+
+.ide-file-tree .file-icon {
+  color: var(--ide-text-muted);
+}
+
+/* ── Editor ── */
+.ide-editor {
+  background-color: var(--ide-bg);
+  font-family: var(--ide-font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ide-editor :global(.monaco-editor),
+.ide-editor :global(.monaco-editor .margin),
+.ide-editor :global(.monaco-editor .monaco-editor-background) {
+  background-color: var(--ide-bg) !important;
+}
+
+.ide-editor .line-numbers {
+  color: var(--ide-text-muted) !important;
+}
+
+.ide-editor .current-line {
+  border: none !important;
+  background-color: var(--ide-surface) !important;
+}
+
+/* ── Terminal ── */
+.ide-terminal {
+  background-color: #0d1117;
+  color: var(--ide-text);
+  font-family: var(--ide-font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  border-top: 1px solid var(--ide-border);
+}
+
+.ide-terminal .xterm-viewport::-webkit-scrollbar-thumb {
+  background-color: var(--ide-scrollbar-thumb) !important;
+}
+
+.ide-terminal .xterm-viewport::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ide-scrollbar-thumb-hover) !important;
+}
+
+/* ── Preview / Output Panel ── */
+.ide-preview {
+  background-color: var(--ide-bg);
+  border-left: 1px solid var(--ide-border);
+}
+
+.ide-preview iframe {
+  background-color: #ffffff;
+  border-radius: var(--ide-radius-sm);
+}
+
+/* ── IDE Divider / Resize Handle ── */
+.ide-divider {
+  background-color: var(--ide-border);
+  transition: background-color var(--ide-duration-fast) var(--ide-ease-out);
+  cursor: col-resize;
+  flex-shrink: 0;
+}
+
+.ide-divider:hover,
+.ide-divider:active {
+  background-color: var(--ide-accent);
+}
+
+.ide-divider.vertical {
+  cursor: row-resize;
+}
+
+/* ── IDE Input / Search ── */
+.ide-input {
+  background-color: var(--ide-surface);
+  color: var(--ide-text);
+  border: 1px solid var(--ide-border);
+  border-radius: var(--ide-radius-sm);
+  font-family: var(--ide-font-ui);
+  font-size: 13px;
+  padding: 6px 10px;
+  transition: border-color var(--ide-duration-fast) var(--ide-ease-out),
+              box-shadow var(--ide-duration-fast) var(--ide-ease-out);
+}
+
+.ide-input:focus {
+  outline: none;
+  border-color: var(--ide-accent);
+  box-shadow: 0 0 0 2px var(--ide-accent-subtle);
+}
+
+.ide-input::placeholder {
+  color: var(--ide-text-muted);
+}
+
+/* ── IDE Button ── */
+.ide-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-family: var(--ide-font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--ide-radius-sm);
+  border: 1px solid var(--ide-border);
+  background-color: var(--ide-surface);
+  color: var(--ide-text-secondary);
+  cursor: pointer;
+  transition: all var(--ide-duration-fast) var(--ide-ease-out);
+}
+
+.ide-btn:hover {
+  background-color: var(--ide-surface-hover);
+  color: var(--ide-text);
+  border-color: var(--ide-border-active);
+}
+
+.ide-btn.primary {
+  background-color: var(--ide-accent);
+  color: #1a1a2e;
+  border-color: var(--ide-accent);
+}
+
+.ide-btn.primary:hover {
+  background-color: var(--ide-accent-hover);
+  border-color: var(--ide-accent-hover);
+}
+
+.ide-btn.ghost {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.ide-btn.ghost:hover {
+  background-color: var(--ide-surface);
+  border-color: var(--ide-border);
+}
+
+/* ── IDE Surface Card ── */
+.ide-surface {
+  background-color: var(--ide-surface);
+  border: 1px solid var(--ide-border);
+  border-radius: var(--ide-radius-sm);
+  transition: background-color var(--ide-duration-normal) var(--ide-ease-out),
+              border-color var(--ide-duration-normal) var(--ide-ease-out);
+}
+
+.ide-surface:hover {
+  background-color: var(--ide-surface-hover);
+  border-color: var(--ide-border-active);
+}
+
+/* ── IDE Badge ── */
+.ide-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  font-family: var(--ide-font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 9999px;
+  background-color: var(--ide-accent-subtle);
+  color: var(--ide-accent);
+}
+
+.ide-badge.success {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: var(--ide-success);
+}
+
+.ide-badge.error {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--ide-error);
+}
+
+.ide-badge.warning {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--ide-warning);
+}
+
+.ide-badge.info {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--ide-info);
+}

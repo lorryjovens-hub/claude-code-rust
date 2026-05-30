@@ -1,0 +1,74 @@
+# =============================================================================
+# Claude Desktop Tauri — Orchestration Configuration
+# =============================================================================
+# All magic numbers / tunables previously hard-coded across the codebase are
+# centralised here.  The application reads this file at startup and caches the
+# values in a global OrchestrationConfig struct (see src/config/mod.rs).
+# =============================================================================
+
+[tool_loop]
+# Maximum number of back-and-forth tool-calling iterations per turn.
+max_tool_iterations = 50
+
+# Token threshold at which automatic context compression triggers.
+# Reduced from 2.5M to 600K to stay safely below most models' context limits.
+token_threshold = 600_000
+
+# Context compression: keep this many most-recent messages untouched.
+recent_messages_to_keep = 10
+
+# Default max_tokens sent to the model when not otherwise specified.
+default_max_tokens = 12288
+
+[tools]
+# Maximum bytes a tool output can produce before being truncated.
+max_output_bytes = 102400    # 100 KiB
+
+# Default timeout (seconds) for Bash commands.
+default_bash_timeout_secs = 60
+
+[tools.computer_use]
+# Virtual display dimensions.
+display_width = 1920
+display_height = 1080
+
+[memory]
+# MemEx (memory extraction service) backend URL.
+memex_backend_url = "http://127.0.0.1:8765"
+
+# Minimum auto-importance score for automatic memory ingestion (0.0–1.0).
+auto_ingest_importance_threshold = 0.5
+
+# Whether the memory subsystem is enabled by default.
+enabled = true
+
+# Whether to automatically search memory before each user turn.
+auto_search = true
+
+# Whether to automatically ingest important facts after each turn.
+auto_ingest = true
+
+[bridge]
+# Internal bridge server port (connects webview ↔ native engine).
+port = 30085
+
+[http]
+# Request timeout for LLM API calls (seconds).
+request_timeout_secs = 300
+
+# Maximum retries for transient HTTP errors (429, 5xx).
+max_retries = 3
+
+# Base backoff in milliseconds (doubles each retry: 500, 1000, 2000).
+retry_base_backoff_ms = 500
+
+[logging]
+# Log level: trace, debug, info, warn, error.
+level = "info"
+
+# Write logs to this directory (set to "" to disable file logging).
+log_dir = ""
+
+[telemetry]
+# OpenTelemetry exporter endpoint (set to "" to disable).
+otlp_endpoint = ""

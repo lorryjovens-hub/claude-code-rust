@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Claude Desktop
+Comment=AI-powered developer assistant
+Exec=claude-desktop-tauri
+Icon=com.claude.desktop
+Terminal=false
+Type=Application
+Categories=Development;Utility;
+Keywords=development;ai;assistant;coding;
+StartupWMClass=claude-desktop-tauri
