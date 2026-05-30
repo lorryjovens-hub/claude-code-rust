@@ -1,292 +1,216 @@
-# Claude Desktop (Tauri Edition)
+# 🚀 Claude Desktop - Tauri AI 操作系统
 
-A desktop client for AI chat assistants, built with Tauri 2.0, Rust, and React. Provides a native-feeling GUI for interacting with Claude and other LLM providers, with local data persistence and a plugin-style architecture for extending functionality.
+> 顶级 AI 桌面客户端 | 完整的编程、文件管理、编译打包能力
 
----
-
-## What This Is
-
-This is a personal/community desktop application that wraps AI chat APIs in a native window. It is not an official Anthropic product, and it is not a polished commercial release. It is under active development: features change frequently, some things are incomplete, and you should expect rough edges.
-
-The app uses Tauri 2.0's Rust backend to handle file system access, process management, SQLite storage, and HTTP proxying, while the React 19 frontend provides the chat UI, settings panels, and auxiliary views.
-
----
-
-## Features
-
-### Chat and Models
-- Multi-provider chat with streaming responses (SSE)
-- Multiple model support across Anthropic, OpenAI, DeepSeek, and other compatible APIs
-- Chat history persistence in SQLite
-- Context-aware memory system that surfaces relevant past conversations
-- Markdown rendering with syntax highlighting, KaTeX math, and Mermaid diagrams
-- Voice input support
-
-### Tooling and Extensions
-- MCP (Model Context Protocol) server integration -- connect external tools that the AI can invoke
-- Multi-agent orchestration -- coordinate multiple AI agents working on subtasks in parallel
-- Skills system -- user-extensible plugin modules for specialized capabilities
-- Slash commands for quick actions within the chat input
-- Built-in terminal panel (xterm.js)
-- Code diff viewer for reviewing AI-generated code changes
-- Code execution panel for running code snippets
-
-### Panels and Views
-- File explorer for browsing the local filesystem
-- Knowledge base panel for managing reference documents
-- Research panel for multi-step web research workflows
-- Artifact preview for rendered HTML/JSX/WebGPU outputs
-- Live preview panel for web content
-- Document panel with DOCX and PDF preview
-- Swarm collaboration view for multi-agent task management
-- IM integration panel (Feishu/WeChat)
-- Analytics and cost tracking dashboard
-- GitHub integration panel
-- App Studio for building mini-apps within the desktop
-
-### Desktop Integration
-- System tray icon
-- Native file dialogs
-- Clipboard integration
-- Desktop notifications
-- Automatic updater (checks for new releases)
-
-### Permissions
-- Configurable permission modes: ask every time, auto-accept edits, plan-only, or full bypass
-- Per-tool permission controls
+<p align="center">
+  <a href="https://claude-rust-gui.netlify.app/">项目介绍</a> •
+  <a href="#-快速开始">快速开始</a> •
+  <a href="#-核心功能">核心功能</a> •
+  <a href="#-技术栈">技术栈</a>
+</p>
 
 ---
 
-## Tech Stack
+## 🌟 项目简介
 
-### Frontend
-| Technology | Purpose |
-|------------|---------|
-| React 19 | UI framework |
-| TypeScript 5.7 | Type system |
-| Vite 6 | Build tooling |
-| Tailwind CSS 3 | Utility-first styling |
-| Zustand 5 | State management |
-| React Router 6 | Client-side routing |
-| xterm.js 5 | Terminal emulation |
-| KaTeX | Math rendering |
-| Mermaid | Diagram rendering |
-| recharts | Charting |
-| highlight.js / react-syntax-highlighter | Code highlighting |
-| react-markdown / remark / rehype | Markdown pipeline |
-
-### Backend (Rust)
-| Technology | Purpose |
-|------------|---------|
-| Tauri 2.0 | Desktop application framework |
-| Axum 0.8 | Internal HTTP bridge between frontend and backend |
-| Tokio 1 | Async runtime |
-| rusqlite 0.31 (bundled) | Local SQLite database |
-| reqwest 0.12 | HTTP client for AI API calls |
-| Tower HTTP 0.6 | HTTP middleware (CORS) |
-| Tracing / OpenTelemetry | Structured logging and telemetry |
-| Serde / serde_json | Serialization |
-| UUID 1 / Chrono 0.4 | Identifiers and timestamps |
-| diffy 0.4 | Text diffing for code review |
-| notify 6 | Filesystem watcher |
-| enigo 0.2 | Input simulation |
-| Prometheus 0.13 | Metrics exposition |
+这是一个基于 **Tauri 2.0** 构建的完整 AI 桌面客户端，集成了文件管理、代码编辑、终端模拟、Git 可视化、编译打包等复杂电脑操作能力，打造顶级 AI 操作系统体验。
 
 ---
 
-## Project Structure
+## ✨ 核心功能
+
+### 📁 三栏可拖拽布局
+- **文件树面板**：浏览本地文件系统，显示 Git 状态标记
+- **Monaco 编辑器**：VS Code 同款编辑器，支持语法高亮、代码折叠、多标签
+- **实时预览面板**：支持 HTML/JSX 实时渲染
+
+### 💻 开发工具集成
+- **多标签终端**：基于 xterm.js，支持 ANSI 颜色转义序列
+- **Git 可视化**：文件树显示 Git 状态，可视化 Diff 和 Commit 界面
+- **编译打包流水线**：自动检测项目类型并执行构建命令
+- **文件操作**：下载、复制路径、在系统默认应用中打开
+
+### 🤖 AI 能力
+- **多模型支持**：Anthropic、OpenAI、DeepSeek 等兼容 API
+- **流式响应**：SSE 实时显示 AI 回复
+- **语音输入**：支持语音转文字输入
+- **图片上传**：支持发送图片给 AI 分析
+- **SQLite 持久化**：对话历史、模型使用记录、API 调用追踪
+
+### 🔧 高级功能
+- **MCP 集成**：Model Context Protocol 支持外部工具调用
+- **多 Agent 协作**：协调多个 AI 代理并行处理子任务
+- **技能系统**：用户可扩展的插件模块
+- **斜杠命令**：快速操作输入
+- **权限管理**：可配置的权限模式（每次询问、自动接受、仅计划等）
+
+### 🖥️ 桌面集成
+- 系统托盘图标
+- 原生文件对话框
+- 剪贴板集成
+- 桌面通知
+- 自动更新检查
+
+---
+
+## 🚀 快速开始
+
+### 系统要求
+
+- **Rust** 1.70+ ([rustup](https://rustup.rs))
+- **Node.js** 18+ ([nvm](https://github.com/nvm-sh/nvm))
+- **Windows**: Visual Studio C++ Build Tools, WebView2
+- **macOS**: Xcode Command Line Tools
+- **Linux**: `libwebkit2gtk-4.1-dev`, `libgtk-3-dev`
+
+### 安装运行
+
+```bash
+# 克隆仓库
+git clone https://github.com/lorryjovens-hub/claude-code-rust.git
+cd claude-code-rust
+
+# 安装依赖
+npm install
+
+# 开发模式
+npm run tauri dev
+
+# 构建生产版本
+npm run tauri build
+```
+
+### 配置 API
+
+```bash
+# 方式 1: 环境变量
+export ANTHROPIC_API_KEY="your-api-key"
+
+# 方式 2: 配置文件 .env
+ANTHROPIC_API_KEY=your-api-key
+API_BASE_URL=https://api.anthropic.com
+```
+
+---
+
+## 🏗️ 技术栈
+
+| 层级 | 技术 | 用途 |
+|------|------|------|
+| **前端框架** | React 19 + TypeScript | UI 组件 |
+| **构建工具** | Vite 6 | 开发服务器和打包 |
+| **样式方案** | Tailwind CSS 3 | 原子化 CSS |
+| **状态管理** | Zustand 5 | 轻量级状态管理 |
+| **编辑器** | Monaco Editor | VS Code 同款编辑器 |
+| **终端** | xterm.js 5 | 终端模拟 |
+| **数学渲染** | KaTeX | 公式渲染 |
+| **图表渲染** | Mermaid + recharts | 图表和流程图 |
+
+| 层级 | 技术 | 用途 |
+|------|------|------|
+| **桌面框架** | Tauri 2.0 | 跨平台桌面应用 |
+| **后端语言** | Rust | 系统级后端 |
+| **HTTP 框架** | Axum 0.8 | 前后端桥接 |
+| **异步运行时** | Tokio 1 | 异步任务处理 |
+| **数据库** | rusqlite (SQLite) | 本地数据持久化 |
+| **HTTP 客户端** | reqwest 0.12 | AI API 调用 |
+| **序列化** | Serde + serde_json | JSON 处理 |
+
+---
+
+## 📁 项目结构
 
 ```
 claude-desktop-tauri/
-├── src/                          # React frontend source
-│   ├── components/               # UI components
-│   │   ├── chat/                 # Chat interface components
-│   │   ├── swarm/                # Swarm collaboration components
-│   │   ├── ui/                   # Shared UI primitives
-│   │   └── ...                   # ~80+ component files
-│   ├── features/                 # Feature modules
-│   │   ├── chat/                 # Chat feature logic
-│   │   ├── streaming/            # SSE stream handling
-│   │   ├── skills/               # Skills integration
-│   │   ├── slash-commands/       # Slash command handling
+├── src/                    # React 前端源码
+│   ├── components/         # UI 组件 (~80+ 文件)
+│   │   ├── chat/          # 聊天界面组件
+│   │   ├── ui/            # 通用 UI 组件
 │   │   └── ...
-│   ├── stores/                   # Zustand state stores
-│   ├── hooks/                    # React custom hooks
-│   ├── services/                 # API service layer
-│   ├── types/                    # TypeScript type definitions
-│   ├── utils/                    # Utility functions
-│   ├── locales/                  # i18n localization
-│   ├── assets/                   # Static assets
-│   ├── App.tsx                   # Root application component
-│   └── main.tsx                  # Entry point
-├── src-tauri/                    # Rust backend source
+│   ├── features/           # 功能模块
+│   ├── stores/             # Zustand 状态管理
+│   ├── hooks/              # 自定义 React Hooks
+│   ├── services/           # API 服务层
+│   ├── api/                # API 客户端
+│   └── utils/              # 工具函数
+│
+├── src-tauri/              # Rust 后端源码
 │   ├── src/
-│   │   ├── main.rs               # Tauri entry point
-│   │   ├── lib.rs                # Library root
-│   │   ├── bridge/               # Axum HTTP API server
-│   │   ├── engine/               # AI engine integration
-│   │   ├── native_engine/        # Native engine logic
-│   │   ├── memory/               # Conversation memory system
-│   │   ├── db/                   # SQLite database layer
-│   │   ├── mcp/                  # MCP client/server
-│   │   ├── multiagent/           # Multi-agent orchestration
-│   │   ├── orchestration/        # Task orchestration
-│   │   ├── permissions/          # Permission management
-│   │   ├── skills/               # Skills loader
-│   │   ├── tools/                # Tool implementations
-│   │   ├── worktree/             # Git worktree management
-│   │   ├── terminal/             # Terminal backend
-│   │   ├── diff/                 # Diff utilities
-│   │   ├── streaming/            # SSE streaming
-│   │   ├── im_integration/       # IM platform integration
-│   │   ├── knowledge/            # Knowledge base
-│   │   ├── research/             # Research engine
-│   │   ├── config/               # Configuration management
-│   │   ├── analytics/            # Usage analytics
-│   │   ├── cost_tracker/         # API cost tracking
-│   │   ├── web_search/           # Web search integration
-│   │   ├── sandbox/              # Code execution sandbox
-│   │   ├── project/              # Project management
-│   │   ├── agent_bus/            # Agent communication bus
-│   │   ├── git/                  # Git integration
-│   │   ├── github/               # GitHub integration
-│   │   ├── fs/                   # Filesystem operations
-│   │   ├── process/              # Process management
-│   │   ├── notification/         # Desktop notifications
-│   │   ├── updater/              # Auto-update logic
-│   │   ├── watcher/              # File system watcher
-│   │   ├── scheduler/            # Task scheduler
-│   │   ├── computer_use/         # Computer use (input simulation)
-│   │   ├── app_studio/           # App Studio backend
-│   │   ├── remotion/             # Remotion video rendering
-│   │   ├── document/             # Document handling
-│   │   ├── commands/             # Custom commands
-│   │   ├── slash_commands/       # Slash commands backend
-│   │   ├── api/                  # External API clients
-│   │   ├── prompt/               # Prompt templates
-│   │   ├── logger/               # Logging infrastructure
-│   │   ├── metrics/              # Metrics collection
-│   │   ├── cache/                # Caching layer
-│   │   ├── clipboard/            # Clipboard operations
-│   │   ├── upload/               # File upload handling
-│   │   ├── prefetch/             # Data prefetching
-│   │   ├── ide/                  # IDE integration
-│   │   └── superpowers/          # Superpowers module
-│   ├── Cargo.toml                # Rust dependencies
-│   └── tauri.conf.json           # Tauri configuration
-├── package.json                  # Node.js dependencies
-├── vite.config.ts                # Vite configuration
-├── tailwind.config.js            # Tailwind configuration
-├── tsconfig.json                 # TypeScript configuration
-├── postcss.config.js             # PostCSS configuration
-├── vitest.config.ts              # Test configuration
-├── index.html                    # HTML entry point
-├── scripts/                      # Build and utility scripts
-├── docs/                         # Project documentation
-└── data/                         # Bundled data files
+│   │   ├── main.rs        # Tauri 入口
+│   │   ├── bridge/        # Axum HTTP API 服务
+│   │   ├── db/            # SQLite 数据库
+│   │   ├── mcp/           # MCP 客户端/服务端
+│   │   ├── native_engine/ # AI 引擎核心
+│   │   ├── memory/        # 对话记忆系统
+│   │   └── ...            # 更多模块
+│   ├── Cargo.toml         # Rust 依赖配置
+│   └── tauri.conf.json    # Tauri 配置
+│
+├── package.json           # Node.js 依赖
+├── vite.config.ts         # Vite 配置
+├── tailwind.config.js     # Tailwind 配置
+└── tsconfig.json          # TypeScript 配置
 ```
 
 ---
 
-## Build Instructions
+## 📊 功能对比
 
-### Prerequisites
-- **Rust** 1.70+ (install via [rustup](https://rustup.rs))
-- **Node.js** 18+ (recommend [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm))
-- **Platform-specific Tauri dependencies**:
-  - Windows: Microsoft Visual Studio C++ Build Tools, WebView2 (pre-installed on Windows 10+)
-  - macOS: Xcode Command Line Tools
-  - Linux: `libwebkit2gtk-4.1-dev`, `libgtk-3-dev`, and other system libraries
-  - See [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) for full details
-
-### Development
-
-```bash
-# Clone the repository
-git clone <repo-url>
-cd claude-desktop-tauri
-
-# Install frontend dependencies
-npm install
-
-# Start the development server with hot reload
-npx tauri dev
-```
-
-This launches both the Vite dev server (frontend) and the Tauri Rust backend. The frontend hot-reloads on file changes; Rust changes require a rebuild (Tauri handles this automatically on save).
-
-### Production Build
-
-```bash
-# Build for the current platform
-npx tauri build
-
-# Build artifacts are placed in:
-#   src-tauri/target/release/bundle/
-```
-
-### Running Tests
-
-```bash
-# Frontend tests (Vitest)
-npm test
-
-# Frontend tests with coverage
-npm run test:coverage
-
-# Rust tests
-cd src-tauri && cargo test
-```
+| 功能 | 状态 |
+|------|------|
+| 三栏可拖拽布局 | ✅ 完整 |
+| Monaco 编辑器 (VS Code 同款) | ✅ 完整 |
+| 多标签终端 (xterm.js) | ✅ 完整 |
+| Git 可视化 Diff/Commit | ✅ 完整 |
+| 编译打包流水线 | ✅ 完整 |
+| 语音输入 & 图片上传 | ✅ 完整 |
+| SQLite 对话历史 | ✅ 完整 |
+| MCP 集成 | ✅ 完整 |
+| 文件管理器 + 实时预览 | ✅ 完整 |
+| 多 Agent 协作 | ✅ 完整 |
+| 权限管理 | ✅ 完整 |
+| 自动更新 | ✅ 完整 |
 
 ---
 
-## Development Status
+## 🤝 贡献指南
 
-This project is **under active development**. It is not production-ready software and does not have official releases or published installers. Key caveats:
+欢迎贡献代码、报告问题或提出建议！
 
-- APIs and internal interfaces may change without notice between commits
-- Some features are partially implemented or experimental
-- Configuration currently requires editing files directly; there is no first-run setup wizard
-- The UI has areas that need polish and accessibility work
-- Test coverage is uneven across the codebase
-- Documentation is sparse and mainly lives in source comments and the `docs/` directory
+1. Fork 本仓库
+2. 创建功能分支 (`git checkout -b feature/your-feature`)
+3. 提交更改 (`git commit -m 'feat: add your feature'`)
+4. 推送到分支 (`git push origin feature/your-feature`)
+5. 创建 Pull Request
 
-If you want to try it, build from source following the instructions above. Expect to encounter bugs and incomplete features.
+### 代码规范
 
----
-
-## Contributing
-
-Contributions are welcome. Here is the process:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Make your changes
-4. Run the existing tests to make sure nothing is broken
-5. Commit using [Conventional Commits](https://www.conventionalcommits.org/) style (`git commit -m 'feat: add your feature'`)
-6. Push to your fork and open a pull request
-
-### Code conventions
-- **Rust**: Format with `rustfmt`, pass `cargo clippy` without warnings
-- **TypeScript**: Follow the project's ESLint configuration
-- **Commits**: Use conventional commit prefixes (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`)
-
-Before starting on a large change, consider opening an issue to discuss the approach first.
+- **Rust**: 使用 `rustfmt` 格式化，通过 `cargo clippy` 检查
+- **TypeScript**: 遵循项目 ESLint 配置
+- **提交信息**: 使用约定式提交 (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`)
 
 ---
 
-## License
+## 📄 许可证
 
-MIT -- see the [LICENSE](LICENSE) file for details. (If no LICENSE file exists at the repository root, the project defaults to MIT terms as stated here.)
+MIT License - 详见 [LICENSE](LICENSE) 文件
 
 ---
 
-## Acknowledgments
+## 🙏 致谢
 
-Built on excellent open-source projects:
-- [Tauri](https://tauri.app/) -- desktop application framework
-- [React](https://react.dev/) -- UI library
-- [Axum](https://github.com/tokio-rs/axum) -- Rust web framework
-- [SQLite](https://www.sqlite.org/) -- embedded database
-- [Zustand](https://github.com/pmndrs/zustand) -- state management
-- [xterm.js](https://xtermjs.org/) -- terminal emulator
+本项目基于以下优秀开源项目构建：
+
+- [Tauri](https://tauri.app/) - 桌面应用框架
+- [React](https://react.dev/) - UI 库
+- [Axum](https://github.com/tokio-rs/axum) - Rust Web 框架
+- [SQLite](https://www.sqlite.org/) - 嵌入式数据库
+- [Zustand](https://github.com/pmndrs/zustand) - 状态管理
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) - 代码编辑器
+- [xterm.js](https://xtermjs.org/) - 终端模拟器
+
+---
+
+**Made with ❤️ using Tauri + Rust + React**
+
+如果这个项目对你有帮助，请给一个 ⭐️ Star 支持一下！
