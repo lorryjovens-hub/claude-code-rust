@@ -1351,6 +1351,7 @@ impl ToolLoopExecutor {
                                 match p {
                                     crate::native_engine::openai_client::OpenAIContentPart::Text { text } => Some(json!({"type": "text", "text": text})),
                                     crate::native_engine::openai_client::OpenAIContentPart::Image { image_url } => Some(json!({"type": "image_url", "image_url": {"url": &image_url.url}})),
+                                    crate::native_engine::openai_client::OpenAIContentPart::Video { video_url } => serde_json::to_value(video_url).ok().map(|v| json!({"type": "video_url", "video_url": v})),
                                 }
                             }).collect();
                             json!(arr)
@@ -1387,6 +1388,7 @@ impl ToolLoopExecutor {
                                         match p {
                                             crate::native_engine::openai_client::OpenAIContentPart::Text { text } => Some(json!({"type": "text", "text": text})),
                                             crate::native_engine::openai_client::OpenAIContentPart::Image { image_url } => Some(json!({"type": "image_url", "image_url": {"url": &image_url.url}})),
+                                            crate::native_engine::openai_client::OpenAIContentPart::Video { video_url } => serde_json::to_value(video_url).ok().map(|v| json!({"type": "video_url", "video_url": v})),
                                         }
                                     }).collect();
                                     json!(arr)
@@ -1422,6 +1424,12 @@ impl ToolLoopExecutor {
                                             "text" => Some(crate::native_engine::openai_client::OpenAIContentPart::Text { text: p.get("text")?.as_str()?.to_string() }),
                                             "image_url" => Some(crate::native_engine::openai_client::OpenAIContentPart::Image {
                                                 image_url: crate::native_engine::openai_client::ImageUrl { url: p.get("image_url")?.get("url")?.as_str()?.to_string() },
+                                            }),
+                                            "video_url" => Some(crate::native_engine::openai_client::OpenAIContentPart::Video {
+                                                video_url: crate::native_engine::openai_client::VideoUrl {
+                                                    url: p.get("video_url")?.get("url")?.as_str()?.to_string(),
+                                                    detail: p.get("video_url")?.get("detail").and_then(|d| d.as_str()).map(String::from),
+                                                },
                                             }),
                                             _ => None,
                                         }
@@ -1845,6 +1853,15 @@ impl ToolLoopExecutor {
                             Some(crate::native_engine::openai_client::OpenAIContentPart::Image {
                                 image_url: crate::native_engine::openai_client::ImageUrl {
                                     url: url_obj.get("url")?.as_str()?.to_string(),
+                                },
+                            })
+                        }
+                        "video_url" => {
+                            let url_obj = part.get("video_url")?;
+                            Some(crate::native_engine::openai_client::OpenAIContentPart::Video {
+                                video_url: crate::native_engine::openai_client::VideoUrl {
+                                    url: url_obj.get("url")?.as_str()?.to_string(),
+                                    detail: url_obj.get("detail").and_then(|d| d.as_str()).map(String::from),
                                 },
                             })
                         }

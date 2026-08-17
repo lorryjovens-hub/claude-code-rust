@@ -172,7 +172,7 @@ const MessageList = React.memo<MessageListProps>(({
                   </div>
                 )}
                 {(() => {
-                  // Handle content blocks (text + images)
+                  // Handle content blocks (text + images + videos)
                   const content = msg.content;
                   const isContentBlocks = Array.isArray(content);
                   if (isContentBlocks) {
@@ -188,6 +188,15 @@ const MessageList = React.memo<MessageListProps>(({
                                 <img src={imgSrc} alt="Uploaded image" className="w-full h-auto max-h-[400px] object-contain bg-white" />
                               </div>
                             );
+                          }
+                          if (block.type === 'video_url' || block.type === 'video') {
+                            const videoUrl = block.video_url?.url || '';
+                            const isPlayable = videoUrl.startsWith('data:') || videoUrl.startsWith('http');
+                            return isPlayable ? (
+                              <div key={bi} className="rounded-xl overflow-hidden border border-claude-border max-w-[400px]">
+                                <video src={videoUrl} controls className="w-full h-auto max-h-[400px] object-contain bg-black" />
+                              </div>
+                            ) : null;
                           }
                           if (block.type === 'text' && block.text?.trim()) {
                             return <div key={bi} className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">{block.text}</div>;

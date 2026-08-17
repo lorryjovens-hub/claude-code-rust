@@ -34,11 +34,22 @@ pub enum OpenAIContentPart {
     Text { text: String },
     #[serde(rename = "image_url")]
     Image { image_url: ImageUrl },
+    /// Video input part. Carries the same `url` plus optional `detail` key pair as
+    /// `image_url`, so a video attachment survives the request build unchanged.
+    #[serde(rename = "video_url")]
+    Video { video_url: VideoUrl },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ImageUrl {
     pub url: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VideoUrl {
+    pub url: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub detail: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -311,5 +322,79 @@ impl OpenAIClient {
 impl Default for OpenAIClient {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_video_content_part_serializes_with_type_tag() {
+        let part = OpenAIContentPart::Video {
+            video_url: VideoUrl {
+                url: "data:video/mp4;base64,AAAA".to_string(),
+                detail: None,
+            },
+        };
+        let value = serde_json::to_value(&part).expect("video part serializes");
+        assert_eq!(value["type"], "video_url");
+        assert_eq!(value["video_url"]["url"], "data:video/mp4;base64,AAAA");
+        // `detail` is optional upstream, so it must be omitted when unset.
+        assert!(value["video_url"].get("detail").is_none());
+    }
+
+    #[test]
+    fn test_video_content_part_keeps_detail_when_set() {
+        let part = OpenAIContentPart::Video {
+            video_url: VideoUrl {
+                url: "https://example.com/clip.mp4".to_string(),
+                detail: Some("low".to_string()),
+            },
+        };
+        let value = serde_json::to_value(&part).expect("video part serializes");
+        assert_eq!(value["video_url"]["detail"], "low");
+    }
+
+    #[test]
+    fn test_video_content_part_round_trips() {
+        let json_part = json!({
+            "type": "video_url",
+            "video_url": {"url": "data:video/webm;base64,BBBB", "detail": "high"},
+        });
+        let part: OpenAIContentPart =
+            serde_json::from_value(json_part.clone()).expect("video part deserializes");
+        match &part {
+            OpenAIContentPart::Video { video_url } => {
+                assert_eq!(video_url.url, "data:video/webm;base64,BBBB");
+                assert_eq!(video_url.detail.as_deref(), Some("high"));
+            }
+            other => panic!("expected a video part, got {:?}", other),
+        }
+        assert_eq!(serde_json::to_value(&part).unwrap(), json_part);
+    }
+
+    #[test]
+    fn test_multi_content_keeps_video_alongside_text_and_image() {
+        let content = OpenAIContent::Multi(vec![
+            OpenAIContentPart::Text {
+                text: "describe this".to_string(),
+            },
+            OpenAIContentPart::Image {
+                image_url: ImageUrl {
+                    url: "data:image/png;base64,CCCC".to_string(),
+                },
+            },
+            OpenAIContentPart::Video {
+                video_url: VideoUrl {
+                    url: "data:video/mp4;base64,DDDD".to_string(),
+                    detail: None,
+                },
+            },
+        ]);
+        let value = serde_json::to_value(&content).expect("content serializes");
+        let parts = value.as_array().expect("multi content is an array");
+        assert_eq!(parts.len(), 3);
+        assert_eq!(parts[2]["type"], "video_url");
     }
 }

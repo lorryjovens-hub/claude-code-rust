@@ -1032,6 +1032,8 @@ const ChatMainContent = ({ onNewChat, resetKey, tunerConfig, onOpenDocument, onA
     const githubFiles = pendingFiles.filter(f => f.status === 'done' && f.source === 'github');
     // Local image files with base64 previewUrl — collect BEFORE clearing pendingFiles
     const localImageFiles = pendingFiles.filter(f => f.status === 'done' && f.fileType === 'image' && f.previewUrl);
+    // Local video files with base64 previewUrl — collect BEFORE clearing pendingFiles
+    const localVideoFiles = pendingFiles.filter(f => f.status === 'done' && f.fileType === 'video' && f.previewUrl);
     const uploadedPayload = uploadedFiles.map(f => ({ fileId: f.fileId!, fileName: f.fileName, fileType: f.fileType, mimeType: f.mimeType, size: f.size }));
     const githubPayload = githubFiles.map(f => ({
       fileId: `github:${f.ghRepo || f.fileName}`,
@@ -1083,14 +1085,21 @@ const ChatMainContent = ({ onNewChat, resetKey, tunerConfig, onOpenDocument, onA
 
     // Optimistic UI: Add user message immediately
     const hasImages = localImageFiles.length > 0;
+    const hasVideos = localVideoFiles.length > 0;
 
     let tempUserMsg: any;
-    if (hasImages) {
-      // Multi-content block message with images
+    if (hasImages || hasVideos) {
+      // Multi-content block message with images and videos
       const contentBlocks: any[] = localImageFiles.map(f => ({
         type: 'image_url' as const,
         image_url: { url: f.previewUrl!, detail: 'high' },
       }));
+      for (const f of localVideoFiles) {
+        contentBlocks.push({
+          type: 'video_url' as const,
+          video_url: { url: f.previewUrl! },
+        });
+      }
       if (userMessageText.trim()) {
         contentBlocks.push({ type: 'text', text: userMessageText });
       }

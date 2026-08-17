@@ -4,12 +4,18 @@ export interface AnthropicMessage {
 }
 
 export interface AnthropicContent {
-  type: 'text' | 'image' | 'tool_use' | 'tool_result';
+  // The desktop chat UI builds media parts in the OpenAI shape and passes them
+  // through unchanged, so `video_url` blocks also reach this converter.
+  type: 'text' | 'image' | 'tool_use' | 'tool_result' | 'video_url';
   text?: string;
   source?: {
     type: 'base64';
     media_type: string;
     data: string;
+  };
+  video_url?: {
+    url: string;
+    detail?: string;
   };
   id?: string;
   name?: string;
@@ -55,10 +61,14 @@ export interface OpenAIMessage {
 }
 
 export interface OpenAIContent {
-  type: 'text' | 'image_url';
+  type: 'text' | 'image_url' | 'video_url';
   text?: string;
   image_url?: {
     url: string;
+  };
+  video_url?: {
+    url: string;
+    detail?: string;
   };
 }
 
@@ -121,17 +131,24 @@ export function anthropicToOpenAIMessages(anthropicMessages: AnthropicMessage[],
         openaiMessages.push({ role: 'user', content });
       } else if (Array.isArray(content)) {
         const textParts: string[] = [];
-        const imageParts: OpenAIContent[] = [];
+        const mediaParts: OpenAIContent[] = [];
 
         for (const block of content) {
           if (block.type === 'text' && block.text) {
             textParts.push(block.text);
           } else if (block.type === 'image' && block.source) {
-            imageParts.push({
+            mediaParts.push({
               type: 'image_url',
               image_url: {
                 url: `data:${block.source.media_type};base64,${block.source.data}`,
               },
+            });
+          } else if (block.type === 'video_url' && block.video_url) {
+            mediaParts.push({
+              type: 'video_url',
+              video_url: block.video_url.detail
+                ? { url: block.video_url.url, detail: block.video_url.detail }
+                : { url: block.video_url.url },
             });
           } else if (block.type === 'tool_result') {
             // Tool results are handled separately
@@ -146,13 +163,13 @@ export function anthropicToOpenAIMessages(anthropicMessages: AnthropicMessage[],
           }
         }
 
-        if (imageParts.length > 0) {
+        if (mediaParts.length > 0) {
           const textContent = textParts.join('').trim();
           const combinedContent: OpenAIContent[] = [];
           if (textContent) {
             combinedContent.push({ type: 'text', text: textContent });
           }
-          combinedContent.push(...imageParts);
+          combinedContent.push(...mediaParts);
           openaiMessages.push({ role: 'user', content: combinedContent });
         } else if (textParts.length > 0) {
           openaiMessages.push({ role: 'user', content: textParts.join('') });
