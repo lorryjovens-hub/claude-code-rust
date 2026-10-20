@@ -108,34 +108,7 @@ async fn sync_push(
                     let models: Vec<crate::config::ModelConfig> = sync_p
                         .models
                         .iter()
-                        .map(|m| {
-                            crate::config::ModelConfig {
-                                id: m
-                                    .get("id")
-                                    .and_then(|v| v.as_str())
-                                    .unwrap_or("")
-                                    .to_string(),
-                                name: m
-                                    .get("name")
-                                    .and_then(|v| v.as_str())
-                                    .unwrap_or("")
-                                    .to_string(),
-                                enabled: m
-                                    .get("enabled")
-                                    .and_then(|v| v.as_bool())
-                                    .unwrap_or(true),
-                                max_tokens: m
-                                    .get("maxTokens")
-                                    .and_then(|v| v.as_u64())
-                                    .map(|v| v as u32),
-                                supports_vision: false,
-                                supports_tools: true,
-                                supports_streaming: true,
-                                context_window: None,
-                                cost_per_1k_input: None,
-                                cost_per_1k_output: None,
-                            }
-                        })
+                        .map(super::providers::model_from_json)
                         .collect();
 
                     let existing = config.providers.iter().position(|p| p.id == sync_p.id);

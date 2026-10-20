@@ -202,7 +202,7 @@ impl AnthropicClient {
                 .header("x-api-key", &provider.provider.api_key)
                 .header("anthropic-version", "2023-06-01")
                 .header("content-type", "application/json")
-                .json(&body)
+                .json(&provider.prepare_request(body.clone()))
                 .send()
                 .await?;
 
@@ -261,7 +261,7 @@ impl AnthropicClient {
                 .header("x-api-key", &provider.provider.api_key)
                 .header("anthropic-version", "2023-06-01")
                 .header("content-type", "application/json")
-                .json(&body)
+                .json(&provider.prepare_request(body.clone()))
                 .send()
                 .await?;
 
@@ -339,7 +339,7 @@ impl AnthropicClient {
                 .header("x-api-key", &provider.provider.api_key)
                 .header("anthropic-version", "2023-06-01")
                 .header("content-type", "application/json")
-                .json(&body)
+                .json(&provider.prepare_request(body.clone()))
                 .send()
                 .await?;
 

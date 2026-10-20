@@ -213,7 +213,7 @@ impl OpenAIClient {
                 .post(&url)
                 .header("Authorization", format!("Bearer {}", provider.provider.api_key))
                 .header("content-type", "application/json")
-                .json(&body)
+                .json(&provider.prepare_request(body.clone()))
                 .send()
                 .await?;
 
@@ -280,7 +280,7 @@ impl OpenAIClient {
                 .post(&url)
                 .header("Authorization", format!("Bearer {}", provider.provider.api_key))
                 .header("content-type", "application/json")
-                .json(&body)
+                .json(&provider.prepare_request(body.clone()))
                 .send()
                 .await?;
 

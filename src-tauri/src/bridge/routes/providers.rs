@@ -8,7 +8,89 @@ use serde_json;
 use std::collections::HashMap;
 
 use super::super::AppState;
-use crate::config::ConfigManager;
+use crate::config::{ConfigManager, ModelConfig, ModelPricing};
+
+fn string_list(value: Option<&serde_json::Value>) -> Vec<String> {
+    value
+        .and_then(|value| value.as_array())
+        .map(|values| values.iter().filter_map(|value| value.as_str().map(String::from)).collect())
+        .unwrap_or_default()
+}
+
+pub(super) fn model_from_json(model: &serde_json::Value) -> ModelConfig {
+    let mut input_modalities = string_list(model.get("inputModalities").or_else(|| model.get("input_modalities")));
+    if input_modalities.is_empty() {
+        input_modalities.push("text".to_string());
+        if model.get("supportsVision").and_then(|value| value.as_bool()).unwrap_or(false) {
+            input_modalities.push("image".to_string());
+        }
+    }
+
+    let pricing = model
+        .get("pricingUsdPerMillionTokens")
+        .or_else(|| model.get("pricing_usd_per_million_tokens"))
+        .and_then(|value| Some(ModelPricing {
+            input: value.get("input")?.as_f64()?,
+            output: value.get("output")?.as_f64()?,
+            cache_read: value.get("cacheRead").or_else(|| value.get("cache_read")).and_then(|value| value.as_f64()),
+            cache_write: value.get("cacheWrite").or_else(|| value.get("cache_write")).and_then(|value| value.as_f64()),
+        }));
+    let cost_per_1k_input = pricing.as_ref().map(|value| value.input / 1000.0)
+        .or_else(|| model.get("costPer1kInput").and_then(|value| value.as_f64()));
+    let cost_per_1k_output = pricing.as_ref().map(|value| value.output / 1000.0)
+        .or_else(|| model.get("costPer1kOutput").and_then(|value| value.as_f64()));
+
+    ModelConfig {
+        id: model.get("id").and_then(|value| value.as_str()).unwrap_or("").to_string(),
+        name: model.get("name").and_then(|value| value.as_str()).unwrap_or("").to_string(),
+        enabled: model.get("enabled").and_then(|value| value.as_bool()).unwrap_or(true),
+        max_tokens: model.get("maxTokens").and_then(|value| value.as_u64()).map(|value| value as u32),
+        supports_vision: input_modalities.iter().any(|modality| modality == "image"),
+        supports_tools: model.get("supportsTools").and_then(|value| value.as_bool()).unwrap_or(true),
+        supports_streaming: model.get("supportsStreaming").and_then(|value| value.as_bool()).unwrap_or(true),
+        context_window: model.get("contextWindow").and_then(|value| value.as_u64()).map(|value| value as u32),
+        cost_per_1k_input,
+        cost_per_1k_output,
+        input_modalities,
+        thinking: string_list(model.get("thinking")),
+        pricing_usd_per_million_tokens: pricing,
+    }
+}
+
+fn model_to_json(model: &ModelConfig) -> serde_json::Value {
+    let input_modalities = if model.input_modalities.is_empty() {
+        let mut modalities = vec!["text".to_string()];
+        if model.supports_vision { modalities.push("image".to_string()); }
+        modalities
+    } else {
+        model.input_modalities.clone()
+    };
+    let pricing = model.pricing_usd_per_million_tokens.clone().or_else(|| Some(ModelPricing {
+        input: model.cost_per_1k_input? * 1000.0,
+        output: model.cost_per_1k_output? * 1000.0,
+        cache_read: None,
+        cache_write: None,
+    }));
+
+    serde_json::json!({
+        "id": model.id,
+        "name": model.name,
+        "enabled": model.enabled,
+        "maxTokens": model.max_tokens,
+        "supportsVision": model.supports_vision,
+        "supportsTools": model.supports_tools,
+        "supportsStreaming": model.supports_streaming,
+        "contextWindow": model.context_window,
+        "pricingUsdPerMillionTokens": pricing.map(|value| serde_json::json!({
+            "input": value.input,
+            "output": value.output,
+            "cacheRead": value.cache_read,
+            "cacheWrite": value.cache_write,
+        })),
+        "inputModalities": input_modalities,
+        "thinking": model.thinking,
+    })
+}
 
 async fn providers_list(State(state): State<AppState>) -> Json<serde_json::Value> {
     let config_manager = state.config_manager.clone();
@@ -22,11 +104,7 @@ async fn providers_list(State(state): State<AppState>) -> Json<serde_json::Value
                 "apiKey": p.api_key,
                 "baseUrl": p.base_url,
                 "format": p.provider_type,
-                "models": p.models.iter().map(|m| serde_json::json!({
-                    "id": m.id,
-                    "name": m.name,
-                    "enabled": m.enabled,
-                })).collect::<Vec<_>>(),
+                "models": p.models.iter().map(model_to_json).collect::<Vec<_>>(),
                 "enabled": p.enabled,
                 "supportsWebSearch": p.supports_web_search,
                 "webSearchStrategy": p.web_search_strategy,
@@ -57,20 +135,7 @@ async fn providers_create(State(state): State<AppState>, Json(req): Json<CreateP
     if let Some(m) = manager.as_mut() {
         let id = uuid::Uuid::new_v4().to_string();
         let provider_type = req.format.unwrap_or_else(|| "openai".to_string());
-        let models: Vec<crate::config::ModelConfig> = req.models.unwrap_or_default().iter().map(|m| {
-            crate::config::ModelConfig {
-                id: m.get("id").and_then(|v| v.as_str()).unwrap_or("").to_string(),
-                name: m.get("name").and_then(|v| v.as_str()).unwrap_or("").to_string(),
-                enabled: m.get("enabled").and_then(|v| v.as_bool()).unwrap_or(true),
-                max_tokens: None,
-                supports_vision: false,
-                supports_tools: true,
-                supports_streaming: true,
-                context_window: None,
-                cost_per_1k_input: None,
-                cost_per_1k_output: None,
-            }
-        }).collect();
+        let models: Vec<ModelConfig> = req.models.unwrap_or_default().iter().map(model_from_json).collect();
         let new_provider = crate::config::ProviderConfig {
             id: id.clone(),
             name: req.name.clone(),
@@ -102,7 +167,7 @@ async fn providers_create(State(state): State<AppState>, Json(req): Json<CreateP
                             "apiKey": created.api_key,
                             "baseUrl": created.base_url,
                             "format": created.provider_type,
-                            "models": created.models.iter().map(|m| serde_json::json!({"id": m.id, "name": m.name, "enabled": m.enabled})).collect::<Vec<_>>(),
+                            "models": created.models.iter().map(model_to_json).collect::<Vec<_>>(),
                             "enabled": created.enabled,
                             "supportsWebSearch": created.supports_web_search,
                             "webSearchStrategy": created.web_search_strategy,
@@ -169,20 +234,7 @@ async fn providers_patch(Path(id): Path<String>, State(state): State<AppState>, 
                     c.providers[idx].web_search_test_reason = if reason.is_null() { None } else { reason.as_str().map(|s| s.to_string()) };
                 }
                 if let Some(models_val) = updates.get("models").and_then(|v| v.as_array()) {
-                    c.providers[idx].models = models_val.iter().map(|m| {
-                        crate::config::ModelConfig {
-                            id: m.get("id").and_then(|v| v.as_str()).unwrap_or("").to_string(),
-                            name: m.get("name").and_then(|v| v.as_str()).unwrap_or("").to_string(),
-                            enabled: m.get("enabled").and_then(|v| v.as_bool()).unwrap_or(true),
-                            max_tokens: None,
-                            supports_vision: false,
-                            supports_tools: true,
-                            supports_streaming: true,
-                            context_window: None,
-                            cost_per_1k_input: None,
-                            cost_per_1k_output: None,
-                        }
-                    }).collect();
+                    c.providers[idx].models = models_val.iter().map(model_from_json).collect();
                 }
             }).ok();
 
@@ -199,7 +251,7 @@ async fn providers_patch(Path(id): Path<String>, State(state): State<AppState>, 
                         "apiKey": p.api_key,
                         "baseUrl": p.base_url,
                         "format": p.provider_type,
-                        "models": p.models.iter().map(|m| serde_json::json!({"id": m.id, "name": m.name, "enabled": m.enabled})).collect::<Vec<_>>(),
+                        "models": p.models.iter().map(model_to_json).collect::<Vec<_>>(),
                         "enabled": p.enabled,
                         "supportsWebSearch": p.supports_web_search,
                         "webSearchStrategy": p.web_search_strategy,

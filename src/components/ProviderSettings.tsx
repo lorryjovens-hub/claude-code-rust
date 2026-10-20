@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { MINIMAX_MODELS, isDirectMiniMax, mergeDiscoveredModels } from '../utils/minimax';
 import { Plus, Trash2, Check, Eye, EyeOff, RefreshCw, ChevronDown, ChevronRight, X, Globe } from 'lucide-react';
 import { getProviders, createProvider, updateProvider, deleteProvider, testProviderWebSearch, Provider, ProviderModel } from '../api';
 
 // Auto-detect provider info from URL.
 // `webSearch: 'native'` means the bridge has a dedicated native search handler for this provider.
 // Anthropic-format providers implicitly support web search via the upstream API's server tool.
-const KNOWN_PROVIDERS: Array<{
+export const KNOWN_PROVIDERS: Array<{
   match: (url: string) => boolean;
   name: string;
   format: 'anthropic' | 'openai';
   color: string;
   letter: string;
   defaultModels?: ProviderModel[];
+  endpoints?: Array<{ region: 'global_en' | 'cn_zh'; format: 'anthropic' | 'openai'; url: string }>;
   webSearch?: 'native';
 }> = [
     {
@@ -34,8 +36,14 @@ const KNOWN_PROVIDERS: Array<{
     },
     { match: u => /siliconflow/i.test(u), name: 'SiliconFlow', format: 'openai', color: '#7C3AED', letter: 'S' },
     {
-      match: u => /minimax/i.test(u), name: 'MiniMax', format: 'openai', color: '#FF6B35', letter: 'M',
-      defaultModels: [{ id: 'MiniMax-M1', name: 'MiniMax M1' }]
+      match: isDirectMiniMax, name: 'MiniMax', format: 'openai', color: '#FF6B35', letter: 'M',
+      endpoints: [
+        { region: 'global_en', format: 'openai', url: 'https://api.minimax.io/v1' },
+        { region: 'cn_zh', format: 'openai', url: 'https://api.minimaxi.com/v1' },
+        { region: 'global_en', format: 'anthropic', url: 'https://api.minimax.io/anthropic' },
+        { region: 'cn_zh', format: 'anthropic', url: 'https://api.minimaxi.com/anthropic' },
+      ],
+      defaultModels: MINIMAX_MODELS
     },
     {
       match: u => /generativelanguage\.googleapis|gemini/i.test(u), name: 'Google Gemini', format: 'openai', color: '#4285F4', letter: 'G',
@@ -53,9 +61,17 @@ const KNOWN_PROVIDERS: Array<{
   ];
 
 
-function detectProvider(url: string) {
+export function detectProvider(url: string) {
+  const normalizedUrl = url.replace(/\/+$/, '');
   for (const kp of KNOWN_PROVIDERS) {
-    if (kp.match(url)) return kp;
+    const endpoint = kp.endpoints?.find(candidate => candidate.url === normalizedUrl);
+    if (endpoint) return { ...kp, format: endpoint.format };
+    if (kp.match(url)) {
+      if (isDirectMiniMax(url) && /^\/anthropic(?:\/|$)/.test(new URL(url).pathname)) {
+        return { ...kp, format: 'anthropic' as const };
+      }
+      return kp;
+    }
   }
   return null;
 }
@@ -293,9 +309,9 @@ const ProviderSettings: React.FC = () => {
           const res = await fetch(endpoint + '/models', { headers: { 'Authorization': 'Bearer ' + key } });
           if (res.ok) {
             const data = await res.json();
-            const models = (data.data || [])
+            const models = mergeDiscoveredModels(url, (data.data || [])
               .filter((m: any) => m.id && typeof m.id === 'string')
-              .map((m: any) => ({ id: m.id, name: m.id, enabled: true }));
+              .map((m: any) => ({ id: m.id, name: m.id, enabled: true })), p.models);
             if (models.length > 0) {
               await updateProvider(p.id, { models });
               setProviderList(prev => prev.map(x => x.id === p.id ? { ...x, models } : x));
@@ -358,9 +374,9 @@ const ProviderSettings: React.FC = () => {
       const res = await fetch(endpoint, { headers });
       if (res.ok) {
         const data = await res.json();
-        const models: ProviderModel[] = (data.data || [])
+        const models = mergeDiscoveredModels(p.baseUrl, (data.data || [])
           .filter((m: any) => m.id && typeof m.id === 'string')
-          .map((m: any) => ({ id: m.id, name: m.id, enabled: true }));
+          .map((m: any) => ({ id: m.id, name: m.id, enabled: true })), p.models);
         if (models.length > 0) {
           await handleUpdate(p.id, { models });
           await loadProviders();
@@ -628,6 +644,18 @@ const ProviderSettings: React.FC = () => {
             <div className="mb-6 p-5 rounded-[16px] border border-claude-border bg-claude-input shadow-sm">
               <div className="text-[15px] font-medium text-claude-text mb-4">添加模型供应商</div>
               <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {KNOWN_PROVIDERS.flatMap(provider => (provider.endpoints || []).map(endpoint => (
+                    <button
+                      key={`${provider.name}-${endpoint.region}-${endpoint.format}`}
+                      type="button"
+                      onClick={() => setNewUrl(endpoint.url)}
+                      className="px-2.5 py-1.5 rounded-lg border border-claude-border/60 text-[11px] text-claude-textSecondary hover:text-claude-text hover:bg-claude-hover transition-colors"
+                    >
+                      {provider.name} {endpoint.region === 'global_en' ? 'Global' : 'China'} {endpoint.format === 'openai' ? 'OpenAI' : 'Anthropic'}
+                    </button>
+                  )))}
+                </div>
                 <input
                   type="text"
                   value={newUrl}
@@ -854,7 +882,7 @@ const ProviderSettings: React.FC = () => {
                   <div className="space-y-0.5 pr-2 -mr-2">
                     {(selected.models || []).slice(modelPage * MODELS_PER_PAGE, (modelPage + 1) * MODELS_PER_PAGE).map((m, _pi) => {
                       const mi = modelPage * MODELS_PER_PAGE + _pi; // real index in full array
-                      const hasThinking = (selected.models || []).some(x => x.id === m.id + '-thinking') || m.id.endsWith('-thinking');
+                      const hasThinking = (m.thinking?.length || 0) > 0 || (selected.models || []).some(x => x.id === m.id + '-thinking') || m.id.endsWith('-thinking');
                       return (
                         <div key={mi} className="flex items-center gap-2 group rounded-lg px-2 py-1.5 -mx-2 transition-colors hover:bg-claude-hover/50">
                           <button
@@ -894,6 +922,12 @@ const ProviderSettings: React.FC = () => {
                           </div>
                           {hasThinking && !m.id.endsWith('-thinking') && (
                             <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 flex-shrink-0" title="支持扩展思考">Thinking</span>
+                          )}
+                          {m.inputModalities?.includes('image') && (
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 flex-shrink-0">Image</span>
+                          )}
+                          {m.inputModalities?.includes('video') && (
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 flex-shrink-0">Video</span>
                           )}
                           <button
                             onClick={() => {

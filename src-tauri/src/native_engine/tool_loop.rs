@@ -1401,6 +1401,9 @@ impl ToolLoopExecutor {
                             if let Some(ref tid) = m.tool_call_id {
                                 obj["tool_call_id"] = json!(tid);
                             }
+                            if let Some(ref reasoning) = m.reasoning_content {
+                                obj["reasoning_content"] = json!(reasoning);
+                            }
                             Some(obj)
                         }).collect();
                         let (compressed, metadata) = compressor.compress(
@@ -1432,7 +1435,8 @@ impl ToolLoopExecutor {
                                 };
                                 let tool_calls = v.get("tool_calls").and_then(|tc| serde_json::from_value(tc.clone()).ok());
                                 let tool_call_id = v.get("tool_call_id").and_then(|id| id.as_str()).map(String::from);
-                                Some(OpenAIMessage { role, content: openai_content, tool_calls, tool_call_id, reasoning_content: None })
+                                let reasoning_content = v.get("reasoning_content").and_then(|value| value.as_str()).map(String::from);
+                                Some(OpenAIMessage { role, content: openai_content, tool_calls, tool_call_id, reasoning_content })
                             }).collect();
                             tracing::info!(module = "OpenAILoop", "Context compressed: {} -> {} messages, saved {} tokens",
                                 metadata.original_count, metadata.compressed_count, metadata.token_reduction);

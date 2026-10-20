@@ -1,11 +1,16 @@
+import { isDirectMiniMax } from './minimax';
+
 export interface AnthropicMessage {
   role: 'user' | 'assistant' | 'system';
-  content: AnthropicContent | string;
+  content: AnthropicContent | AnthropicContent[] | string;
+  reasoning_content?: string;
 }
 
 export interface AnthropicContent {
-  type: 'text' | 'image' | 'tool_use' | 'tool_result';
+  type: 'text' | 'image' | 'tool_use' | 'tool_result' | 'thinking';
   text?: string;
+  thinking?: string;
+  signature?: string;
   source?: {
     type: 'base64';
     media_type: string;
@@ -33,9 +38,10 @@ export interface AnthropicRequest {
   stream?: boolean;
   tools?: AnthropicTool[];
   thinking?: {
-    type: 'enabled';
+    type: 'enabled' | 'adaptive' | 'disabled';
     budget_tokens?: number;
   };
+  output_config?: { effort: 'low' | 'medium' | 'high' | 'xhigh' | 'max' };
   temperature?: number;
 }
 
@@ -44,6 +50,7 @@ export interface OpenAIMessage {
   content: string | OpenAIContent[];
   name?: string;
   tool_call_id?: string;
+  reasoning_content?: string;
   tool_calls?: {
     id: string;
     type: 'function';
@@ -76,6 +83,8 @@ export interface OpenAIRequest {
     };
   }[];
   enable_thinking?: boolean;
+  thinking?: { type: 'adaptive' | 'disabled' };
+  reasoning_effort?: 'low' | 'medium' | 'high' | 'xhigh' | 'max';
   parallel_tool_calls?: boolean;
   temperature?: number;
 }
@@ -160,6 +169,7 @@ export function anthropicToOpenAIMessages(anthropicMessages: AnthropicMessage[],
       }
     } else if (msg.role === 'assistant') {
       const content = msg.content;
+      const messageIndex = openaiMessages.length;
       if (typeof content === 'string') {
         openaiMessages.push({ role: 'assistant', content });
       } else if (Array.isArray(content)) {
@@ -192,6 +202,12 @@ export function anthropicToOpenAIMessages(anthropicMessages: AnthropicMessage[],
         } else {
           openaiMessages.push({ role: 'assistant', content: '' });
         }
+      }
+      const reasoning = msg.reasoning_content ?? (Array.isArray(content)
+        ? content.filter(block => block.type === 'thinking').map(block => block.thinking || '').join('')
+        : undefined);
+      if (reasoning && openaiMessages[messageIndex]) {
+        openaiMessages[messageIndex].reasoning_content = reasoning;
       }
     } else if (msg.role === 'system') {
       // System messages are already handled above
@@ -240,7 +256,18 @@ export async function sendOpenAIRequest(
     openaiBody.parallel_tool_calls = false;
   }
 
-  if (request.thinking && request.thinking.type === 'enabled' && (!request.tools || request.tools.length === 0)) {
+  const directCurrentMiniMax = isDirectMiniMax(provider.base_url)
+    && ['MiniMax-M3.1-Flash', 'MiniMax-M3'].includes(request.model);
+  if (directCurrentMiniMax) {
+    if (request.model === 'MiniMax-M3.1-Flash') {
+      if (request.thinking?.type === 'disabled') throw new Error('MiniMax-M3.1-Flash requires adaptive thinking');
+      openaiBody.max_tokens = Math.min(openaiBody.max_tokens!, 524_288);
+      openaiBody.thinking = { type: 'adaptive' };
+      openaiBody.reasoning_effort = request.output_config?.effort;
+    } else if (request.thinking) {
+      openaiBody.thinking = { type: request.thinking.type === 'disabled' ? 'disabled' : 'adaptive' };
+    }
+  } else if (request.thinking?.type === 'enabled' && (!request.tools || request.tools.length === 0)) {
     openaiBody.enable_thinking = true;
   }
 
@@ -399,6 +426,16 @@ export async function sendAnthropicRequest(
     ? `${baseUrl}/messages`
     : `${baseUrl}/v1/messages`;
 
+  let body = request;
+  if (isDirectMiniMax(provider.base_url)) {
+    if (request.model === 'MiniMax-M3.1-Flash') {
+      if (request.thinking?.type === 'disabled') throw new Error('MiniMax-M3.1-Flash requires adaptive thinking');
+      body = { ...request, max_tokens: Math.min(request.max_tokens || 524_288, 524_288), thinking: { type: 'adaptive' } };
+    } else if (request.model === 'MiniMax-M3' && request.thinking?.type === 'enabled') {
+      body = { ...request, thinking: { type: 'adaptive' } };
+    }
+  }
+
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
@@ -406,7 +443,7 @@ export async function sendAnthropicRequest(
       'x-api-key': provider.api_key,
       'anthropic-version': '2023-06-01',
     },
-    body: JSON.stringify(request),
+    body: JSON.stringify(body),
   });
 
   return response;

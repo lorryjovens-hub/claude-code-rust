@@ -46,6 +46,25 @@ pub struct ResolvedProvider {
     pub model: ModelConfig,
 }
 
+impl ResolvedProvider {
+    /// Apply direct MiniMax limits immediately before serializing an HTTP request.
+    pub fn prepare_request(&self, mut body: serde_json::Value) -> serde_json::Value {
+        let direct = reqwest::Url::parse(&self.provider.base_url)
+            .ok()
+            .and_then(|url| url.host_str().map(str::to_owned))
+            .map(|host| matches!(host.as_str(), "api.minimax.io" | "api.minimaxi.com"))
+            .unwrap_or(false);
+        if direct && self.model.id == "MiniMax-M3.1-Flash" {
+            let max_tokens = body["max_tokens"].as_u64().unwrap_or(524_288);
+            body["max_tokens"] = serde_json::json!(max_tokens.min(524_288));
+            body["thinking"] = serde_json::json!({ "type": "adaptive" });
+        } else if direct && self.model.id == "MiniMax-M3" && body["thinking"]["type"] == "enabled" {
+            body["thinking"] = serde_json::json!({ "type": "adaptive" });
+        }
+        body
+    }
+}
+
 #[derive(Debug, Clone)]
 struct ProviderCacheEntry {
     pub provider: Provider,

@@ -212,6 +212,14 @@ impl OrchestrationConfig {
     pub fn memex_backend_url() -> &'static str { &Self::get().memory.memex_backend_url }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ModelPricing {
+    pub input: f64,
+    pub output: f64,
+    pub cache_read: Option<f64>,
+    pub cache_write: Option<f64>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelConfig {
     pub id: String,
@@ -224,6 +232,12 @@ pub struct ModelConfig {
     pub context_window: Option<u32>,
     pub cost_per_1k_input: Option<f64>,
     pub cost_per_1k_output: Option<f64>,
+    #[serde(default)]
+    pub input_modalities: Vec<String>,
+    #[serde(default)]
+    pub thinking: Vec<String>,
+    #[serde(default)]
+    pub pricing_usd_per_million_tokens: Option<ModelPricing>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -391,6 +405,42 @@ mod tests {
         assert!(config.default_provider_id.is_none());
         assert!(config.theme.is_none());
         assert!(config.language.is_none());
+    }
+
+    #[test]
+    fn test_model_config_preserves_multimodal_metadata() {
+        let json = r#"{
+            "id":"MiniMax-M3",
+            "name":"MiniMax M3",
+            "enabled":true,
+            "max_tokens":null,
+            "supports_vision":true,
+            "supports_tools":true,
+            "supports_streaming":true,
+            "context_window":1000000,
+            "cost_per_1k_input":0.0006,
+            "cost_per_1k_output":0.0024,
+            "input_modalities":["text","image","video"],
+            "thinking":["adaptive","disabled"],
+            "pricing_usd_per_million_tokens":{
+                "input":0.6,
+                "output":2.4,
+                "cache_read":0.12,
+                "cache_write":null
+            }
+        }"#;
+
+        let model: ModelConfig = serde_json::from_str(json).expect("model config should deserialize");
+
+        assert_eq!(model.context_window, Some(1_000_000));
+        assert_eq!(model.input_modalities, vec!["text", "image", "video"]);
+        assert_eq!(model.thinking, vec!["adaptive", "disabled"]);
+        assert_eq!(model.pricing_usd_per_million_tokens, Some(ModelPricing {
+            input: 0.6,
+            output: 2.4,
+            cache_read: Some(0.12),
+            cache_write: None,
+        }));
     }
 
     #[test]

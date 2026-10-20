@@ -1123,7 +1123,23 @@ export function warmEngine(conversationId: string): void {
 }
 
 // ===== Provider Management =====
-export interface ProviderModel { id: string; name: string; enabled?: boolean; }
+export type ProviderInputModality = 'text' | 'image' | 'video';
+export type ProviderThinkingMode = 'adaptive' | 'disabled' | 'always_on';
+export interface ProviderModel {
+  id: string;
+  name: string;
+  enabled?: boolean;
+  contextWindow?: number;
+  maxTokens?: number;
+  pricingUsdPerMillionTokens?: {
+    input: number;
+    output: number;
+    cacheRead: number | null;
+    cacheWrite: number | null;
+  } | null;
+  inputModalities?: ProviderInputModality[];
+  thinking?: ProviderThinkingMode[];
+}
 export interface Provider {
   id: string; name: string; apiKey: string; baseUrl: string;
   format: 'anthropic' | 'openai'; models: ProviderModel[]; enabled: boolean;
