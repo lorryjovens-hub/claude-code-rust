@@ -29,6 +29,7 @@ tauri-plugin-barcode-scanner = "2"
 tauri-plugin-secure-storage = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+llm-prices = "1.8.0"
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", features = ["json", "stream", "rustls-tls", "blocking"], default-features = false }
 axum = { version = "0.8", features = ["macros", "multipart"] }
