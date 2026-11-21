@@ -267,6 +267,11 @@ impl CostTracker {
     }
 
     pub fn calculate_cost(&self, model: &str, input_tokens: u64, output_tokens: u64) -> f64 {
+        if let Some(cost) =
+            llm_prices::lookup(model).and_then(|p| p.cost(input_tokens, output_tokens))
+        {
+            return cost;
+        }
         let model_cost = self.model_costs.get(model);
         if let Some(mc) = model_cost {
             let input_cost = (input_tokens as f64 / 1000.0) * mc.input_cost_per_1k;
@@ -395,5 +400,23 @@ impl CostTracker {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn calculate_cost_uses_current_list_prices() {
+        let tracker = CostTracker::new(std::env::temp_dir().join("cost_tracker_test"));
+        // gpt-4o lists at $2.50 / $10 per 1M tokens, not its 2024 launch price of $5 / $15.
+        assert!((tracker.calculate_cost("gpt-4o", 1_000_000, 1_000_000) - 12.5).abs() < 1e-9);
+        // Opus 4.5 lists at $5 / $25 per 1M tokens.
+        assert!(
+            (tracker.calculate_cost("claude-opus-4-5", 1_000_000, 1_000_000) - 30.0).abs() < 1e-9
+        );
+        // Dated snapshot ids resolve instead of falling through to $0.
+        assert!(tracker.calculate_cost("gpt-4o-2024-08-06", 1_000_000, 0) > 0.0);
     }
 }
